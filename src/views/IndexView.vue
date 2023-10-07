@@ -1,52 +1,29 @@
 <template>
-  <div class="anchor-navigation">
 
-    <el-container>
+  <div class="anchor-navigation">
       <!-- 左侧导航栏 -->
-      <el-aside width="200px">
-        <el-menu :default-active="activeCategory" :unique-opened="true" class="category-menu">
-          <el-menu-item v-for="category in categories" :key="category.id" :index="String(category.id)">
-            <template v-if="category.children.length">
-              <el-submenu :index="String(category.id + '_submenu')">
-                <template slot="title">
-                  <i :class="category.icon"></i>
-                  {{ category.name }}
-                </template>
-                <el-menu-item v-for="child in category.children" :key="child.id" :index="String(child.id)">
-                  <a @click.prevent="scrollToCategory(child.id)">
-                    <i :class="child.icon"></i>
-                    {{ child.name }}
-                  </a>
-                </el-menu-item>
-              </el-submenu>
-            </template>
-            <template v-else>
-              <a @click.prevent="scrollToCategory(category.id)">
-                <i :class="category.icon"></i>
-                {{ category.name }}
-              </a>
-            </template>
-          </el-menu-item>
-        </el-menu>
-      </el-aside>
+      <el-tree :data="categories" :props="defaultProps" @node-click="handleNodeClick"
+        style="position: fixed; right: 10%; font-size: 100px;" ></el-tree>
+    <el-container>
+
       <!-- 右侧内容 -->
       <el-main>
-
         <div v-for="category in categories" :key="category.id" class="category">
           <div :id="'category-' + category.id" class="category-title">
             <i :class="category.icon"></i>
             {{ category.name }}
           </div>
 
-          <div v-for="site in category.sites" :key="site.id" class="site-card site-block">
+          <div v-for="site in category.sites" :key="site.id" class="site-card">
             <el-tooltip class="item" effect="dark" :content="site.url" placement="bottom">
-              <el-card >
+              <el-card class="site-card  site-block">
 
                 <a :id="'site-' + site.id" :href="site.url" target="_blank">
-                  <p style="float: right; margin-top: auto; padding-left: 10px;">
-                    <el-image style="width: 20%; height: 20%; margin-left: 10px; float: left;"
-                      :src="site.image"></el-image>
+                    <image-preview  class="image" :src="site.image" />
 
+                    <p style="float: left; margin-top: auto;">
+<!--                    <el-image style="width: 30%; height: 30%; margin-left: 10px; float: left; left: 10px;"-->
+<!--                      :src="site.image"></el-image>-->
                     {{ site.name }} <br>
 
                     {{ site.description }}
@@ -68,18 +45,43 @@
               <el-tooltip class="item" effect="dark" :content="site.url" placement="bottom">
                 <el-card class="site-card  site-block">
 
-                  <a :id="'site-' + site.id" :href="site.url" target="_blank">
-                    <p style="float: right; margin-top: auto; padding-left: 10px;">
-                      <el-image style="width: 20%; height: 20%; margin-left: 10px; float: left;"
-                      :src="site.image"></el-image>
-                      {{ site.name }} <br>
+                    <a :id="'site-' + site.id" :href="site.url" target="_blank">
+                        <image-preview  class="image" :src="site.image" />
+                        <p style="float: left; margin-top: auto;">
+                            <!--                    <el-image style="width: 30%; height: 30%; margin-left: 10px; float: left; left: 10px;"-->
+                            <!--                      :src="site.image"></el-image>-->
+                            {{ site.name }} <br>
 
-                      {{ site.description }}
-                    </p>
-                  </a>
+                            {{ site.description }}
+                        </p>
+                    </a>
                 </el-card>
               </el-tooltip>
             </div>
+
+                      <!-- 添加子项的右侧内容 -->
+          <div v-for="childer in child.children" :key="childer.id" class="category">
+            <div :id="'category-' + childer.id" class="category-title">
+              <i :class="childer.icon"></i>
+              {{ childer.name }}
+            </div>
+
+            <div v-for="site in childer.sites" :key="site.id" class="site-card">
+              <el-tooltip class="item" effect="dark" :content="site.url" placement="bottom">
+                <el-card class="site-card  site-block">
+
+                    <a :id="'site-' + site.id" :href="site.url" target="_blank">
+                        <image-preview  class="image" :src="site.image" />
+                        <p style="float: left; margin-top: auto;">
+                            {{ site.name }} <br>
+
+                            {{ site.description }}
+                        </p>
+                    </a>
+                </el-card>
+              </el-tooltip>
+            </div>
+          </div>
           </div>
         </div>
         <div class="demo-image">
@@ -88,9 +90,13 @@
     </el-container>
   </div>
 </template>
-  
+
 <script>
+
+import ImagePreview from "@/components/ImagePreview/index.vue";
+
 export default {
+    components: {ImagePreview},
   data() {
     return {
       activeCategory: '1', // 默认选中第一个分类
@@ -121,11 +127,15 @@ export default {
         }
 
       ],
+      defaultProps: {
+        children: 'children',
+        label: 'name'
+      }
     };
   },
   created() {
     const _this = this
-    this.axios.get('http://localhost:8089/cyzNavigateCategory/tree').then(function (res) {
+    this.axios.get('/api/cyzNavigateCategory/tree').then(function (res) {
       _this.categories = res.data.data
       console.log(_this.categories)
     }).catch(error => {
@@ -138,9 +148,10 @@ export default {
     },
   },
   methods: {
-    scrollToCategory(id) {
+    handleNodeClick(data) {
+      console.log(data.id);
       // 获取目标元素的位置
-      const targetElement = document.getElementById('category-' + id);
+      const targetElement = document.getElementById('category-' + data.id);
       if (targetElement) {
         const targetPosition = targetElement.getBoundingClientRect().top + window.scrollY;
 
@@ -154,12 +165,18 @@ export default {
   },
 };
 </script>
-  
+
 <style scoped>
 .anchor-navigation {
   padding: 20px;
 }
+::v-deep .el-tree-node__label{
+  font-size: 30%;
+}
 
+::v-deep .el-tree-node__content {
+    height: 40%;
+}
 .category-menu {
   position: fixed;
   /* 使左侧导航固定在页面 */
@@ -216,6 +233,7 @@ i {
   margin-right: 10px;
 }
 
+
 /* 添加媒体查询以调整列数 */
 @media screen and (max-width: 1200px) {
   .category .site-card {
@@ -243,6 +261,12 @@ i {
     width: 100%;
     /* 在页面宽度小于400px时，每行只显示一个方块，占满整行 */
   }
+}
+.image {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+    float: left;
 }
 </style>
 
