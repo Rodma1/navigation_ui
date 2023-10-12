@@ -11,7 +11,7 @@
         <div v-for="category in categories" :key="category.id" class="category">
           <div :id="'category-' + category.id" class="category-title">
             <i :class="category.icon"></i>
-            {{ category.name }}
+              <h2>{{ category.name }}</h2>
           </div>
 
           <div v-for="site in category.sites" :key="site.id" class="site-card">
@@ -19,9 +19,9 @@
               <el-card class="site-card  site-block">
 
                 <a :id="'site-' + site.id" :href="site.url" target="_blank">
-                    <image-preview  class="image" :src="site.image" />
+                    <image-preview  class="image" :src="site.image ? site.image : 'http://111.230.112.151/profile/upload/2023/10/08/favicon_20231008114049A001.jpg'" />
 
-                    <p style="float: left; margin-top: auto;">
+                    <p class="category-p">
 <!--                    <el-image style="width: 30%; height: 30%; margin-left: 10px; float: left; left: 10px;"-->
 <!--                      :src="site.image"></el-image>-->
                     {{ site.name }} <br>
@@ -38,7 +38,7 @@
           <div v-for="child in category.children" :key="child.id" class="category">
             <div :id="'category-' + child.id" class="category-title">
               <i :class="child.icon"></i>
-              {{ child.name }}
+                <h3>{{ child.name }}</h3>
             </div>
 
             <div v-for="site in child.sites" :key="site.id" class="site-card">
@@ -47,7 +47,7 @@
 
                     <a :id="'site-' + site.id" :href="site.url" target="_blank">
                         <image-preview  class="image" :src="site.image" />
-                        <p style="float: left; margin-top: auto;">
+                        <p class="category-p">
                             <!--                    <el-image style="width: 30%; height: 30%; margin-left: 10px; float: left; left: 10px;"-->
                             <!--                      :src="site.image"></el-image>-->
                             {{ site.name }} <br>
@@ -63,7 +63,7 @@
           <div v-for="childer in child.children" :key="childer.id" class="category">
             <div :id="'category-' + childer.id" class="category-title">
               <i :class="childer.icon"></i>
-              {{ childer.name }}
+                <h4> {{ childer.name }}</h4>
             </div>
 
             <div v-for="site in childer.sites" :key="site.id" class="site-card">
@@ -72,7 +72,7 @@
 
                     <a :id="'site-' + site.id" :href="site.url" target="_blank">
                         <image-preview  class="image" :src="site.image" />
-                        <p style="float: left; margin-top: auto;">
+                        <p class="category-p">
                             {{ site.name }} <br>
 
                             {{ site.description }}
@@ -267,6 +267,11 @@ i {
     height: 50px;
     margin-right: 10px;
     float: left;
+}
+.category-p {
+    width: 70%;
+    float: left;
+    margin-top: auto;
 }
 </style>
 
