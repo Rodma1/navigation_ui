@@ -38,7 +38,7 @@
         if (isExternal(real_src)) {
           return real_src;
         }
-        return "http://111.230.112.151" + real_src;
+        return process.env.VUE_APP_URL + real_src;
       },
       realWidth() {
         return typeof this.width == "string" ? this.width : `${this.width}px`;

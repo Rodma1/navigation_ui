@@ -19,7 +19,7 @@
               <el-card class="site-card  site-block">
 
                 <a :id="'site-' + site.id" :href="site.url" target="_blank">
-                    <image-preview  class="image" :src="site.image ? site.image : 'http://111.230.112.151/profile/upload/2023/10/08/favicon_20231008114049A001.jpg'" />
+                    <image-preview  class="image" :src="site.image ? site.image : '/profile/upload/2023/10/08/'" />
 
                     <p class="category-p">
 <!--                    <el-image style="width: 30%; height: 30%; margin-left: 10px; float: left; left: 10px;"-->
