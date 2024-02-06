@@ -1,102 +1,27 @@
 <template>
 
   <div class="anchor-navigation">
-      <!-- 左侧导航栏 -->
+      <!-- 右侧导航栏 -->
       <el-tree :data="categories" :props="defaultProps" @node-click="handleNodeClick"
         style="position: fixed; right: 10%; font-size: 100px;" ></el-tree>
-    <el-container>
-
-      <!-- 右侧内容 -->
-      <el-main>
-        <div v-for="category in categories" :key="category.id" class="category">
-          <div :id="'category-' + category.id" class="category-title">
-            <i :class="category.icon"></i>
-              <h2>{{ category.name }}</h2>
+      <el-container>
+        <el-main>
+          <div v-for="category in categories" :key="category.id" class="category">
+            <CategoryContent :category="category" />
           </div>
-
-          <div v-for="site in category.sites" :key="site.id" class="site-card">
-            <el-tooltip class="item" effect="dark" :content="site.url" placement="bottom">
-              <el-card class="site-card  site-block">
-
-                <a :id="'site-' + site.id" :href="site.url" target="_blank">
-                    <image-preview  class="image" :src="site.image ? site.image : '/profile/upload/2023/10/08/'" />
-
-                    <p class="category-p">
-<!--                    <el-image style="width: 30%; height: 30%; margin-left: 10px; float: left; left: 10px;"-->
-<!--                      :src="site.image"></el-image>-->
-                    {{ site.name }} <br>
-
-                    {{ site.description }}
-                  </p>
-                </a>
-              </el-card>
-            </el-tooltip>
-          </div>
-
-
-          <!-- 添加子项的右侧内容 -->
-          <div v-for="child in category.children" :key="child.id" class="category">
-            <div :id="'category-' + child.id" class="category-title">
-              <i :class="child.icon"></i>
-                <h3>{{ child.name }}</h3>
-            </div>
-
-            <div v-for="site in child.sites" :key="site.id" class="site-card">
-              <el-tooltip class="item" effect="dark" :content="site.url" placement="bottom">
-                <el-card class="site-card  site-block">
-
-                    <a :id="'site-' + site.id" :href="site.url" target="_blank">
-                        <image-preview  class="image" :src="site.image" />
-                        <p class="category-p">
-                            <!--                    <el-image style="width: 30%; height: 30%; margin-left: 10px; float: left; left: 10px;"-->
-                            <!--                      :src="site.image"></el-image>-->
-                            {{ site.name }} <br>
-
-                            {{ site.description }}
-                        </p>
-                    </a>
-                </el-card>
-              </el-tooltip>
-            </div>
-
-                      <!-- 添加子项的右侧内容 -->
-          <div v-for="childer in child.children" :key="childer.id" class="category">
-            <div :id="'category-' + childer.id" class="category-title">
-              <i :class="childer.icon"></i>
-                <h4> {{ childer.name }}</h4>
-            </div>
-
-            <div v-for="site in childer.sites" :key="site.id" class="site-card">
-              <el-tooltip class="item" effect="dark" :content="site.url" placement="bottom">
-                <el-card class="site-card  site-block">
-
-                    <a :id="'site-' + site.id" :href="site.url" target="_blank">
-                        <image-preview  class="image" :src="site.image" />
-                        <p class="category-p">
-                            {{ site.name }} <br>
-
-                            {{ site.description }}
-                        </p>
-                    </a>
-                </el-card>
-              </el-tooltip>
-            </div>
-          </div>
-          </div>
-        </div>
-        <div class="demo-image">
-        </div>
-      </el-main>
-    </el-container>
+          <div class="demo-image"></div>
+        </el-main>
+      </el-container>
   </div>
 </template>
 
 <script>
 
-import ImagePreview from "@/components/ImagePreview/index.vue";
+import CategoryContent from "@/components/website/CategoryContent.vue";
+
 
 export default {
-    components: {ImagePreview},
+  components: {  CategoryContent },
   data() {
     return {
       activeCategory: '1', // 默认选中第一个分类
@@ -134,24 +59,21 @@ export default {
     };
   },
   created() {
-    const _this = this
-    this.axios.get('/api/cyzNavigateCategory/tree').then(function (res) {
-      _this.categories = res.data.data
-      console.log(_this.categories)
-    }).catch(error => {
-      console.log(error)
-    })
-  },
-  computed: {
-    selectedCategory() {
-      return this.categories.find(category => String(category.id) === this.activeCategory);
-    },
+    this.fetchCategories();
   },
   methods: {
+    async fetchCategories() {
+      try {
+        const response = await this.axios.get('/api/cyzNavigateCategory/tree');
+        this.categories = response.data.data;
+        console.log(this.categories)
+      } catch (error) {
+        console.error(error);
+      }
+    },
     handleNodeClick(data) {
-      console.log(data.id);
       // 获取目标元素的位置
-      const targetElement = document.getElementById('category-' + data.id);
+      const targetElement = document.getElementById(`category-${data.id}`);
       if (targetElement) {
         const targetPosition = targetElement.getBoundingClientRect().top + window.scrollY;
 
@@ -167,6 +89,7 @@ export default {
 </script>
 
 <style scoped>
+
 .anchor-navigation {
   padding: 20px;
 }
