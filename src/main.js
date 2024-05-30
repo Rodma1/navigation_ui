@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
+// import NavMenuView from './views/NavMenuView'
 import router from './router'
 import store from './store'
 import ElementUI from 'element-ui'
