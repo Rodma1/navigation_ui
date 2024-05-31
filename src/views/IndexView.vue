@@ -2,8 +2,11 @@
 
   <div class="anchor-navigation">
       <!-- 右侧导航栏 -->
-      <el-tree :data="categories" :props="defaultProps" @node-click="handleNodeClick"
-        style="position: fixed; right: 10%; font-size: 100px;" ></el-tree>
+      <div class="tree">
+        <el-tree :data="categories" :props="defaultProps" @node-click="handleNodeClick" 
+         ></el-tree>
+      </div>
+
       <el-container>
         <el-main>
           <div v-for="category in categories" :key="category.id" class="category">
@@ -90,6 +93,11 @@ export default {
 
 <style scoped>
 
+.tree {
+    position: fixed;
+    right: 5%; 
+    font-size: 100px;
+}
 .anchor-navigation {
   padding: 20px;
 }
