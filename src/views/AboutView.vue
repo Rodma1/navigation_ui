@@ -32,8 +32,13 @@
             <p>电子邮件：1156028692@qq.com</p>
             <p>GitHub：<a href="https://github.com/Rodma1?tab=repositories">我的github</a></p>
           </div>
-        </div>
+          <div>
+     
       </div>
+        </div>
+        
+      </div>
+   
     </div>
   </template>
   
@@ -47,11 +52,16 @@
   </script>
   
   <style scoped>
+
   .about {
+    /* position: fixed; */
+    width: 100%;
+    /* height: 80vh; */
     font-family: 'Arial', sans-serif;
     color: #333;
-    background: linear-gradient(to right, #6a11cb, #2575fc);
-    padding: 50px 0;
+    background: linear-gradient(to right, #ECE9E6, #d3d2d2);
+    padding: 20px 0;
+    background-size: 100%;
   }
   .container {
     width: 80%;
@@ -76,6 +86,7 @@
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
+
   .profile-card {
     display: flex;
     align-items: center;

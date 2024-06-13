@@ -2,7 +2,7 @@
     <div id = "navMenu">
         <el-container>
 
-            <el-header>
+            <el-header style="padding: 0 0px;">
                 <el-menu :default-active="activeIndex" :router='true' class="el-menu-demo" mode="horizontal"
                     @select="handleSelect">
                     <el-menu-item v-for="(item, index) in itemList" :index="item.path" :key="index">
