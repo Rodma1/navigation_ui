@@ -5,7 +5,7 @@
 
   <div class="container">
 
-      <div  class="home" style="margin-top: 10%;">
+      <div  class="home" style="margin-top: 15%;">
       <img  alt="Vue logo"  src="../assets/logo.png">
 
     </div>

@@ -2,10 +2,10 @@
     <div id = "navMenu">
         <el-container>
 
-            <el-header style="padding: 0 0px;">
+            <el-header style="padding: 0 0px; height: 70px; ">
                 <el-menu :default-active="activeIndex" :router='true' class="el-menu-demo" mode="horizontal"
                     @select="handleSelect">
-                    <el-menu-item v-for="(item, index) in itemList" :index="item.path" :key="index">
+                    <el-menu-item  style= "height: 100%; line-height: 70px;" v-for="(item, index) in itemList" :index="item.path" :key="index">
                         <span slot="title">{{ item.title }}</span>
                     </el-menu-item>
                 </el-menu>
@@ -61,7 +61,8 @@ export default {
 
 <style>
 .el-menu-demo {
-    background-color:antiquewhite !important;
+    background-color:#ADD8E6 !important;
+    border-radius: 10px;
 }
 
 

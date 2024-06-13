@@ -65,11 +65,11 @@ export default {
   width: auto; /* 使用视口宽度的80% */
   height: auto; /* 高度自适应内容 */
   max-width: 600px; /* 最大宽度为300px */
-  padding: 10px 10px;
+  padding: 0px 10px;
   box-sizing: border-box; /* 包括内边距在内的宽度计算 */
   // border: 1px solid #000;
   border-radius: 10%;
-  margin: 10px; /* 添加间距 */
+  // margin: 10px; /* 添加间距 */
 
 }
 
@@ -113,7 +113,7 @@ export default {
   align-items: center; /* 顶部对齐 */
   flex-wrap: wrap; /* 自动换行以适应小屏幕 */
   flex-direction: column; 
-  gap: 20px; /* 设置两个div之间的间距 */
+  // gap: 20px; /* 设置两个div之间的间距 */
 }
 
 

@@ -2,7 +2,7 @@
     <div class="about">
       <div class="container">
         <div class="header">
-          <h1>{{ msg }}</h1>
+          <h1>关于我</h1>
         </div>
         <div class="content">
           <div class="profile-card">
@@ -24,13 +24,19 @@
             <h2>项目</h2>
             <ul>
               <li><a href="https://github.com/yourproject">日审</a> - 收集日志，管理日志</li>
-              <li><a href="https://github.com/yourproject">硬waf</a> - waf防火墙</li>
+              <li><a href="https://github.com/yourproject">硬waf</a> - waf防火墙 java</li>
+              <li><a href="https://github.com/yourproject">堡垒机</a> - 堡垒机 python</li>
+              <li><a href="https://github.com/yourproject">超融合</a> - 超融合 java</li>
+              <li><a href="https://github.com/yourproject">导航网站</a> - 导航网站 java vue</li>
+
             </ul>
           </div>
           <div class="contact-card">
             <h2>联系我</h2>
             <p>电子邮件：1156028692@qq.com</p>
             <p>GitHub：<a href="https://github.com/Rodma1?tab=repositories">我的github</a></p>
+            <p>CSDN: <a href="https://blog.csdn.net/weixin_46654114?type=blog">我的CSDN</a></p>
+
           </div>
           <div>
      
@@ -45,9 +51,9 @@
   <script>
   export default {
     name: 'AboutView',
-    props: {
-      msg: String
-    }
+    // props: {
+    //   msg: String
+    // }
   }
   </script>
   
