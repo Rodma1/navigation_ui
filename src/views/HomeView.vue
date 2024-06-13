@@ -1,8 +1,18 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
+  
+  
+  
+
+  <div>
+    <div  class="home">
+      <img  alt="Vue logo"  src="../assets/logo.png">
+
+    </div>
+
     <HelloWorld msg="神的孩子都在歌唱个人主页"/>
+
   </div>
+
 </template>
 
 <script>
@@ -25,16 +35,6 @@ export default {
   color: #2c3e50;
 }
 
-nav {
-  padding: 30px;
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
 
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
 </style>
