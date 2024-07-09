@@ -4,6 +4,7 @@ import HomeView from '../views/HomeView.vue'
 import IndexView from '../views/IndexView.vue'
 import AboutView from '../views/AboutView.vue'
 import NavMenuView from '../views/NavMenuView.vue'
+import ElasticsearchView from '../views/ElasticsearchView.vue'
 // import { component } from 'vue/types/umd'
 Vue.use(VueRouter)
 
@@ -28,6 +29,17 @@ const routes = [
         path: '/about',
         name: 'about',
         component: AboutView
+      }, {
+        path: '/elasticsearch',
+        name: 'elasticsearch',
+        component: ElasticsearchView,
+        children:[
+          {
+            path: '/home',
+            name: 'home',
+            component: HomeView
+          }
+        ]
       },
     
     ]

@@ -27,7 +27,8 @@ export default {
             itemList: [
                 { path: '/home', title: '首页' },
                 { path: '/about', title: '关于我' },
-                { path: '/menu', title: '收集的网站'}
+                { path: '/menu', title: '收集的网站'},
+                { path: '/elasticsearch', title: 'es的基本操作'}
             ]
         };
     },
