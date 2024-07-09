@@ -22,17 +22,18 @@
             <el-form-item>
                 <el-button type="primary" :plain="true" @click="linkTest">链接测试</el-button>
             </el-form-item>
+            <el-form-item>
+                <div class="text item">
+
+                    {{ '版本 ：' + versionInfo.number }}
+                    <el-divider direction="vertical"></el-divider>
+                    {{ '安装类型 ：' + versionInfo.buildType }}
+                    <el-divider direction="vertical"></el-divider>
+                    {{ 'lucene版本 ：' + versionInfo.luceneVersion }}
+                </div>
+            </el-form-item>
         </el-form>
-        <el-card class="box-card">
-            <div class="text item">
-                
-                {{ '版本 ：' + versionInfo.number }}
-                <el-divider direction="vertical"></el-divider>
-                {{ '安装类型 ：' + versionInfo.buildType}}
-                <el-divider direction="vertical"></el-divider>
-                {{ 'lucene版本 ：' + versionInfo.luceneVersion}}
-            </div>
-        </el-card>
+
     </div>
 </template>
 
@@ -81,7 +82,13 @@ export default {
 </script>
 
 <style>
+.text {
+    font-size: 14px;
+}
+
+
 .box-card {
     width: 480px;
+
 }
 </style>
