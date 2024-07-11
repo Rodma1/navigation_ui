@@ -1,5 +1,6 @@
 <template>
     <div>
+
         <el-form ref="form" :inline="true" :model="form" label-width="80px">
             <el-form-item label="协议">
                 <el-select v-model="form.scheme" placeholder="请选择协议">
@@ -34,11 +35,20 @@
             </el-form-item>
         </el-form>
 
+
+        <el-tabs v-model="activeName" @tab-click="handleTabClick">
+            <el-tab-pane label="索引操作" name="first"><ElasticIndicesView :connectParam="form"/></el-tab-pane>
+            <el-tab-pane label="配置管理" name="second">配置管理</el-tab-pane>
+            <el-tab-pane label="角色管理" name="third">角色管理</el-tab-pane>
+            <el-tab-pane label="定时任务补偿" name="fourth">定时任务补偿</el-tab-pane>
+        </el-tabs>
     </div>
 </template>
 
 <script>
+import ElasticIndicesView from "./elasticsearch/ElasticIndicesView.vue";
 export default {
+    components: { ElasticIndicesView},
     data() {
         return {
             form: {
@@ -47,13 +57,19 @@ export default {
                 userName: 'elastic',
                 password: 'chenyunzhi123',
                 port: '9200',
-                operationCategory: 'INFO'
+
+                operationCategory: 'INFO',
+                operationType: '',
+                indexName:'',
+                indices:[]
             },
             versionInfo: {
                 "number": "-",
                 "buildType": "-",
                 "luceneVersion": "-"
-            }
+            },
+
+             activeName: ''
         }
     },
     methods: {
@@ -72,10 +88,15 @@ export default {
                 });
                 this.versionInfo = response.data.data
                 console.log(this.versionInfo)
+                this.activeName = ''
             } catch (error) {
                 this.$message.error('链接失败');
             }
 
+        },
+        handleTabClick(tab) {
+            // console.log(tab, event);
+            this.activeName = tab.name
         }
     }
 }
