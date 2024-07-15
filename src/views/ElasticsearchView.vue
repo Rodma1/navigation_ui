@@ -38,7 +38,7 @@
 
         <el-tabs v-model="activeName" @tab-click="handleTabClick">
             <el-tab-pane label="索引操作" name="first"><ElasticIndicesView :connectParam="form"/></el-tab-pane>
-            <el-tab-pane label="配置管理" name="second">配置管理</el-tab-pane>
+            <el-tab-pane label="文档操作" name="second"><DocumentView :connectParam="form"/></el-tab-pane>
             <el-tab-pane label="角色管理" name="third">角色管理</el-tab-pane>
             <el-tab-pane label="定时任务补偿" name="fourth">定时任务补偿</el-tab-pane>
         </el-tabs>
@@ -47,8 +47,9 @@
 
 <script>
 import ElasticIndicesView from "./elasticsearch/ElasticIndicesView.vue";
+import DocumentView from "./elasticsearch/DocumentView.vue"
 export default {
-    components: { ElasticIndicesView},
+    components: { ElasticIndicesView,DocumentView},
     data() {
         return {
             form: {

@@ -94,7 +94,6 @@ export default {
         refreshList() {
             // 执行刷新列表的操作
             this.fetchData();
-            console.log("sdfsd")
         },
 
         getParams(operationType) {
