@@ -1,8 +1,9 @@
 <template>
     <div class="json-viewer-container">
-        <el-button @click="getDocumentsPage">查询</el-button>
+        <el-button @click="refreshList">查询</el-button>
         <el-button type="danger" @click="batchDelete">批量删除</el-button>
         <el-button type="primary" @click="showCreateDialog">创建 JSON 数据</el-button>
+        <b style="margin-left: 5%;">总数： {{ count }}</b>
         <el-dialog title="创建 JSON 数据" :visible.sync="createDialogVisible" width="30%" @close="resetCreateForm">
             <el-input type="textarea" v-model="newJson" placeholder="请输入 JSON 数据" :rows="10"></el-input>
             <span slot="footer" class="dialog-footer">
@@ -43,6 +44,7 @@ export default {
             pageSize: 10,
             selectedItems: [],
             operationCategory: "DOCUMENT",
+            count: 0
         };
     },
     computed: {
@@ -53,6 +55,12 @@ export default {
         }
     },
     methods: {
+        // 刷新
+        refreshList() {
+            // 执行刷新列表的操作
+            this.getDocumentsPage()
+            this.getDocumentCount()
+        },
         //  获取链接请求参数
         getParams(operationType) {
             const params = this.connectParam
@@ -97,7 +105,7 @@ export default {
                     params.document = JSON.stringify(parsedJson);
                     params.indexName = "sdfd"
                     const response = await this.axios.post('/api/elasticsearch/operation', params);
-                    this.getDocumentsPage()
+                    this.refreshList()
                     this.$message({
                         message: response.data.message,
                         type: 'success'
@@ -118,34 +126,46 @@ export default {
             this.currentPage = page;
         },
         async batchDelete() {
-            try {
-                // console.log(this.selectedItems)
-                // this.jsonData = this.jsonData.filter(item => !this.selectedItems.includes(item.id));
-                
+
+            // console.log(this.selectedItems)
+            // this.jsonData = this.jsonData.filter(item => !this.selectedItems.includes(item.id));
+
+            this.$confirm('此操作将永久删除选中的索引文档, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(async () => {
                 var params = this.getParams("INDEX_LIST")
                 params.operationCategory = "INDEX"
-                const response = await this.axios.post('/api/elasticsearch/operation', params);
+                var response = await this.axios.post('/api/elasticsearch/operation', params);
                 const values = response.data.data
                 const indexNames = []
                 values.forEach(item => {
                     indexNames.push(item.index)
                 })
-                
+
                 params = this.getParams("DELETE")
                 params.documentIds = this.selectedItems
                 params.indices = indexNames
-                await this.axios.post('/api/elasticsearch/operation', params);
+                response = await this.axios.post('/api/elasticsearch/operation', params);
                 this.selectedItems = [];
-                this.getDocumentsPage()
+                this.refreshList()
                 this.$message({
-                        message: response.data.message,
-                        type: 'success'
-                    });
-            } catch (error) {
-                this.$message.error(error.message);
-            }
+                    message: response.data.message,
+                    type: 'success'
+                });
+            }).catch((error) => {
+                console.log(error)
+            });
 
 
+
+        },
+        // 获取总数
+        async getDocumentCount() {
+            const params = this.getParams("COUNT")
+            const response = await this.axios.post('/api/elasticsearch/operation', params);
+            this.count = response.data.data
         },
         copyJson(item) {
             const el = document.createElement('textarea');
@@ -158,7 +178,7 @@ export default {
         }
     },
     mounted() {
-        this.getDocumentsPage()
+        this.refreshList()
     }
 };
 </script>
