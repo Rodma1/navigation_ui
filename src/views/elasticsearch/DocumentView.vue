@@ -11,18 +11,21 @@
                 <el-button type="primary" @click="createJson">创建</el-button>
             </span>
         </el-dialog>
-        <div v-for="item in pagedData" :key="item.id" class="json-item">
+        <div v-for="item in  jsonData" :key="item.id" class="json-item">
             <el-checkbox v-model="selectedItems" :label="item.id" class="custom-checkbox">
                 <div class="checkbox-content">
                     <span class="index-name">索引名: {{ item.index }}</span>
                     <span class="index-id">索引id: {{ item.id }}</span>
                 </div>
+
             </el-checkbox>
+            
+            <el-button  style="margin-left: 5%;" type="text" icon="el-icon-document-copy" @click="copyJson(item.source)">复制</el-button>
+
             <json-viewer :value="item.source" style="font-size: 18px;" :expanded="true"></json-viewer>
-            <el-button type="text" icon="el-icon-document-copy" @click="copyJson(item.source)">复制</el-button>
         </div>
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
-            :page-size="pageSize" :total="jsonData.length" layout="total, sizes, prev, pager, next, jumper"></el-pagination>
+            :page-size="pageSize" :total="count" layout="total, sizes, prev, pager, next, jumper"></el-pagination>
 
     </div>
 </template>
@@ -47,19 +50,15 @@ export default {
             count: 0
         };
     },
-    computed: {
-        pagedData() {
-            const start = (this.currentPage - 1) * this.pageSize;
-            const end = start + this.pageSize;
-            return this.jsonData.slice(start, end);
-        }
-    },
+
     methods: {
         // 刷新
         refreshList() {
             // 执行刷新列表的操作
             this.getDocumentsPage()
             this.getDocumentCount()
+            this.currentPage = 1
+            this.pageSize =10
         },
         //  获取链接请求参数
         getParams(operationType) {
@@ -121,9 +120,13 @@ export default {
         },
         handleSizeChange(size) {
             this.pageSize = size;
+            this.currentPage = 1;
+            this.getDocumentsPage()
+
         },
         handleCurrentChange(page) {
             this.currentPage = page;
+            this.getDocumentsPage()
         },
         async batchDelete() {
 
@@ -177,9 +180,9 @@ export default {
             this.$message.success('JSON 已复制到剪贴板');
         }
     },
-    mounted() {
-        this.refreshList()
-    }
+    // mounted() {
+    //     this.refreshList()
+    // }
 };
 </script>
   
