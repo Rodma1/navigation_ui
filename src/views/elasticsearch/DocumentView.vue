@@ -6,6 +6,11 @@
         <b style="margin-left: 5%;">总数： {{ count }}</b>
         <el-dialog title="创建 JSON 数据" :visible.sync="createDialogVisible" width="30%" @close="resetCreateForm">
             <el-input type="textarea" v-model="newJson" placeholder="请输入 JSON 数据" :rows="10"></el-input>
+            <el-select v-model="selectIndex" clearable placeholder="请选择">
+                <el-option v-for="item in indexNames" :key="item" :label="item" :value="item">
+                </el-option>
+            </el-select>
+
             <span slot="footer" class="dialog-footer">
                 <el-button @click="createDialogVisible = false">取消</el-button>
                 <el-button type="primary" @click="createJson">创建</el-button>
@@ -19,8 +24,9 @@
                 </div>
 
             </el-checkbox>
-            
-            <el-button  style="margin-left: 5%;" type="text" icon="el-icon-document-copy" @click="copyJson(item.source)">复制</el-button>
+
+            <el-button style="margin-left: 5%;" type="text" icon="el-icon-document-copy"
+                @click="copyJson(item.source)">复制</el-button>
 
             <json-viewer :value="item.source" style="font-size: 18px;" :expanded="true"></json-viewer>
         </div>
@@ -47,7 +53,9 @@ export default {
             pageSize: 10,
             selectedItems: [],
             operationCategory: "DOCUMENT",
-            count: 0
+            count: 0,
+            indexNames: [],
+            selectIndex:''
         };
     },
 
@@ -58,7 +66,7 @@ export default {
             this.getDocumentsPage()
             this.getDocumentCount()
             this.currentPage = 1
-            this.pageSize =10
+            this.pageSize = 10
         },
         //  获取链接请求参数
         getParams(operationType) {
@@ -102,7 +110,7 @@ export default {
                     // this.jsonData.push({ ...parsedJson, id: this.jsonData.length + 1 });
                     const params = this.getParams("INSERT")
                     params.document = JSON.stringify(parsedJson);
-                    params.indexName = "sdfd"
+                    params.indexName = this.selectIndex
                     const response = await this.axios.post('/api/elasticsearch/operation', params);
                     this.refreshList()
                     this.$message({
@@ -128,6 +136,19 @@ export default {
             this.currentPage = page;
             this.getDocumentsPage()
         },
+
+        async getindexNames() {
+            const params = this.getParams("INDEX_LIST")
+            params.operationCategory = "INDEX"
+            const response = await this.axios.post('/api/elasticsearch/operation', params);
+            const values = response.data.data
+            const indexNames = []
+            values.forEach(item => {
+                indexNames.push(item.index)
+            })
+            this.indexNames = indexNames;
+        },
+
         async batchDelete() {
 
             // console.log(this.selectedItems)
@@ -138,19 +159,11 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(async () => {
-                var params = this.getParams("INDEX_LIST")
-                params.operationCategory = "INDEX"
-                var response = await this.axios.post('/api/elasticsearch/operation', params);
-                const values = response.data.data
-                const indexNames = []
-                values.forEach(item => {
-                    indexNames.push(item.index)
-                })
 
-                params = this.getParams("DELETE")
+                const params = this.getParams("DELETE")
                 params.documentIds = this.selectedItems
-                params.indices = indexNames
-                response = await this.axios.post('/api/elasticsearch/operation', params);
+                params.indices = this.indexNames
+                const response = await this.axios.post('/api/elasticsearch/operation', params);
                 this.selectedItems = [];
                 this.refreshList()
                 this.$message({
@@ -180,9 +193,9 @@ export default {
             this.$message.success('JSON 已复制到剪贴板');
         }
     },
-    // mounted() {
-    //     this.refreshList()
-    // }
+    mounted() {
+        this.getindexNames()
+    }
 };
 </script>
   

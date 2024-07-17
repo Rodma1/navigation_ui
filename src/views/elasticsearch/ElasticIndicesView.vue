@@ -2,7 +2,8 @@
     <div>
         <el-button @click="refreshList">查询</el-button>
         <el-button @click="dialogVisible = true">创建索引</el-button>
-        <el-button  @click="deleteIndex">删除索引</el-button>
+        <el-button @click="deleteIndex">删除索引</el-button>
+        <el-button @click="aliasDialogVisible = true">关联别名</el-button>
 
         <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%"
             @selection-change="handleSelectionChange">
@@ -38,7 +39,7 @@
         </el-table>
 
 
-        <el-dialog title="表单" :visible.sync="dialogVisible" width="30%">
+        <el-dialog title="创建索引" :visible.sync="dialogVisible" width="30%">
             <el-form ref="form" :model="createIndexFrom" label-width="80px">
                 <el-form-item label="索引名称">
                     <el-input v-model="createIndexFrom.indexName"></el-input>
@@ -48,6 +49,19 @@
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisible = false">取 消</el-button>
                 <el-button type="primary" @click="createIndex" :loading="false">确 定</el-button>
+            </span>
+        </el-dialog>
+
+        <el-dialog title="关联别名" :visible.sync="aliasDialogVisible" width="30%">
+            <el-form ref="form" :model="associationAliasFrom" label-width="80px">
+                <el-form-item label="别名名称">
+                    <el-input v-model="associationAliasFrom.alias"></el-input>
+                </el-form-item>
+                <!-- 其他表单项 -->
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="aliasDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="associationAlias" :loading="false">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -75,8 +89,12 @@ export default {
             multipleSelection: [],
             operationCategory: "INDEX",
             dialogVisible: false,
+            aliasDialogVisible: false,
             createIndexFrom: {
                 indexName: ''
+            },
+            associationAliasFrom: {
+                alias: ''
             },
         }
     },
@@ -137,6 +155,32 @@ export default {
             // 表单验证和提交逻辑
             this.dialogVisible = false;
         },
+
+        /**
+         * 关联别名
+         */
+        async associationAlias() {
+
+            try {
+                const params = this.getParams("INSERT")
+                params.indices = this.multipleSelection
+                params.operationCategory = "ALIAS"
+                params.alias = this.associationAliasFrom.alias
+                const response = await this.axios.post('/api/elasticsearch/operation', params);
+                this.$message({
+                    message: response.data.message,
+                    type: 'success'
+                });
+                this.associationAliasFrom.alias = ''
+                params.indices = []
+            } catch (error) {
+                console.log(error)
+            }
+
+            // 表单验证和提交逻辑
+            this.aliasDialogVisible = false;
+        },
+
         deleteIndex() {
 
             this.$confirm('此操作将永久删除选中的索引, 是否继续?', '提示', {
