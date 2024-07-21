@@ -55,7 +55,7 @@ export default {
             operationCategory: "DOCUMENT",
             count: 0,
             indexNames: [],
-            selectIndex:''
+            selectIndex: ''
         };
     },
 
@@ -95,6 +95,8 @@ export default {
         },
         showCreateDialog() {
             this.createDialogVisible = true;
+            this.getindexNames()
+
         },
         resetCreateForm() {
             this.newJson = '';
@@ -193,9 +195,9 @@ export default {
             this.$message.success('JSON 已复制到剪贴板');
         }
     },
-    mounted() {
-        this.getindexNames()
-    }
+    // mounted() {
+    //     this.getindexNames()
+    // }
 };
 </script>
   

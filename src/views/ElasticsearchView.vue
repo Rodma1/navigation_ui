@@ -40,7 +40,7 @@
             <el-tab-pane label="索引操作" name="first"><ElasticIndicesView :connectParam="form"/></el-tab-pane>
             <el-tab-pane label="文档操作" name="second"><DocumentView :connectParam="form"/></el-tab-pane>
             <el-tab-pane label="别名操作" name="third"><AliasesView :connectParam="form"/></el-tab-pane>
-            <el-tab-pane label="定时任务补偿" name="fourth">定时任务补偿</el-tab-pane>
+            <el-tab-pane label="模板列表" name="fourth"><TemplateView :connectParam="form"></TemplateView></el-tab-pane>
         </el-tabs>
     </div>
 </template>
@@ -49,8 +49,9 @@
 import ElasticIndicesView from "./elasticsearch/ElasticIndicesView.vue";
 import DocumentView from "./elasticsearch/DocumentView.vue"
 import AliasesView from "./elasticsearch/AliasesView.vue"
+import TemplateView from "./elasticsearch/TemplateView.vue"
 export default {
-    components: { ElasticIndicesView,DocumentView,AliasesView},
+    components: { ElasticIndicesView, DocumentView, AliasesView, TemplateView },
     data() {
         return {
             form: {

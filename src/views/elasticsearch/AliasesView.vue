@@ -10,7 +10,7 @@
             </el-table-column> -->
             <el-table-column prop="alias" label="别名" >
             </el-table-column>
-            <el-table-column prop="index" label="文档数">
+            <el-table-column prop="index" label="文档名">
             </el-table-column>
             <el-table-column prop="isWriteIndex" label="是否是写入索引" show-overflow-tooltip>
             </el-table-column>
