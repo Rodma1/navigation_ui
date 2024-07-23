@@ -28,7 +28,7 @@
             </el-table-column>
             <el-table-column fixed="right" label="操作">
                 <template slot-scope="scope">
-                    <el-button @click="deleteAlias(scope.row)" type="text" size="medium">删除</el-button>
+                    <el-button @click="deleteTemplate(scope.row)" type="text" size="medium">删除</el-button>
                     <el-button @click="getTemplateInfo(scope.row)" type="primary" style="margin-left: 16px;">
                         查看详情
         
@@ -137,15 +137,14 @@ export default {
                 console.log(error)
             }
         },
-        deleteAlias(row) {
-            this.$confirm('此操作将取消别名' + row.alias + '和索引' + row.index + '的关联, 是否继续?', '提示', {
+        deleteTemplate(row) {
+            this.$confirm('此操作将删除' + row.name + '是否继续?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(async () => {
-                const params = this.getParams("DISASSOCIATION")
-                params.alias = row.alias
-                params.indices = [row.index]
+                const params = this.getParams("DELETE")
+                params.indexTemplate = row.name
                 const response = await this.axios.post('/api/elasticsearch/operation', params);
                 this.$message({
                     message: response.data.message,
@@ -155,6 +154,7 @@ export default {
 
             }).catch((error) => {
                 console.log(error)
+                this.$message.error(error)
             });
         },
 
