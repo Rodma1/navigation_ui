@@ -102,7 +102,7 @@ export default {
                 type: 'warning'
             }).then(async () => {
                 const params = this.getParams("PUT")
-                params.taskId = null
+                params.taskId = row.task_id
                 const response = await this.axios.post('/api/elasticsearch/operation', params);
                 this.$message({
                     message: response.data.message,
