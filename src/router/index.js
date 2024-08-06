@@ -1,29 +1,56 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-// import HomeView from '../views/HomeView.vue'
+import HomeView from '../views/HomeView.vue'
 import IndexView from '../views/IndexView.vue'
-
+import AboutView from '../views/AboutView.vue'
+import NavMenuView from '../views/NavMenuView.vue'
+import ElasticsearchView from '../views/ElasticsearchView.vue'
+import ArticleView from "@/views/ArticleView.vue";
+// import { component } from 'vue/types/umd'
 Vue.use(VueRouter)
 
 const routes = [
-  // {
-  //   path: '/',
-  //   name: 'home',
-  //   component: HomeView
-  // },
-  // {
-  //   path: '/about',
-  //   name: 'about',
-  //   // route level code-splitting
-  //   // this generates a separate chunk (about.[hash].js) for this route
-  //   // which is lazy-loaded when the route is visited.
-  //   component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-  // },
   {
-    path: '/menu',
-    name: 'menu',
-    component: IndexView
+    path:'/',// 程序启动默认路由
+    component: NavMenuView,
+    meta: {title: '整体页面布局'},
+    redirect: '/home',// 重定向到首页
+    children:[
+      {
+        path: '/home',
+        name: 'home',
+        component: HomeView
+      },
+      {
+        path: '/menu',
+        name: 'menu',
+        component: IndexView
+      },
+      {
+        path: '/about',
+        name: 'about',
+        component: AboutView
+      }, {
+        path: '/elasticsearch',
+        name: 'elasticsearch',
+        component: ElasticsearchView,
+        children:[
+          {
+            path: '/home',
+            name: 'home',
+            component: HomeView
+          }
+        ]
+      },
+      {
+        path: '/article',
+        name: 'article',
+        component: ArticleView
+      },
+    
+    ]
   }
+ 
 ]
 
 const router = new VueRouter({
