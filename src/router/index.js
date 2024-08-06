@@ -5,6 +5,7 @@ import IndexView from '../views/IndexView.vue'
 import AboutView from '../views/AboutView.vue'
 import NavMenuView from '../views/NavMenuView.vue'
 import ElasticsearchView from '../views/ElasticsearchView.vue'
+import ArticleView from "@/views/ArticleView.vue";
 // import { component } from 'vue/types/umd'
 Vue.use(VueRouter)
 
@@ -40,6 +41,11 @@ const routes = [
             component: HomeView
           }
         ]
+      },
+      {
+        path: '/article',
+        name: 'article',
+        component: ArticleView
       },
     
     ]
