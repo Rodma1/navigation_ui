@@ -191,6 +191,10 @@ export default {
                 state: 0,
                 categoryIds: [],
             },
+            updateArticleStatusFrom: {
+                id: null,
+                state: 0,
+            },
             deleteArticleFrom: {
                 id: null,
             },
@@ -299,7 +303,19 @@ export default {
          * @returns {Promise<void>}
          */
         async updateArticleState(row) {
-            console.log(row)
+            try {
+                this.updateArticleStatusFrom.id = row.id
+                this.updateArticleStatusFrom.state = row.state
+                const response = await this.axios.put('/api/cyzArticle/updateStatus', this.updateArticleStatusFrom);
+                this.$message({
+                    message: response.data.message,
+                    type: 'success'
+                });
+                this.refreshList()
+                this.updateArticleStatusFrom = {}
+            } catch (error) {
+                console.log(error)
+            }
         },
 
         /**
@@ -328,7 +344,6 @@ export default {
          * @returns {Promise<void>}
          */
         async handleDelete(row) {
-            console.log(row)
             this.$confirm('此操作将删除文章'+ row.name +', 是否继续?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
