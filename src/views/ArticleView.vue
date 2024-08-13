@@ -191,6 +191,9 @@ export default {
                 state: 0,
                 categoryIds: [],
             },
+            deleteArticleFrom: {
+                id: null,
+            },
             createCategoryFrom: {
                 name: '',
                 icon: '',
@@ -320,12 +323,28 @@ export default {
             this.updateArticleVisible = false;
         },
         /**
-         * 更新文章状态
+         * 删除文章
          * @param row
          * @returns {Promise<void>}
          */
         async handleDelete(row) {
             console.log(row)
+            this.$confirm('此操作将删除文章'+ row.name +', 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(async () => {
+                this.deleteArticleFrom.id = row.id
+                const response = await this.axios.delete('/api/cyzArticle/delete', {data:this.deleteArticleFrom});
+                this.$message({
+                    message: response.data.message,
+                    type: 'success'
+                });
+                this.refreshList()
+
+            }).catch((error) => {
+                console.log(error)
+            });
         },
 
 
