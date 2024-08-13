@@ -1,7 +1,8 @@
 <template>
     <div>
         <el-button @click="refreshList">查询</el-button>
-        <el-button @click="dialogVisible = true;getAllCategories()">创建索引</el-button>
+        <el-button @click="dialogVisible = true;getAllCategories()">创建文章</el-button>
+
         <el-button @click="categoryVisible = true;getAllCategories()">创建类别</el-button>
         <el-input style="width: 200px;margin-left: 10px"  v-model="pageArticleFrom.name" placeholder="查询文章名"></el-input>
         <el-cascader style="width: 200px;margin-left: 10px;"
@@ -47,11 +48,23 @@
                     />
                 </template>
             </el-table-column>
+            <el-table-column
+                align="right">
+                <template slot-scope="scope">
+                    <el-button
+                        size="mini"
+                        @click="updateArticleFrom=scope.row;updateArticleVisible = true;getAllCategories()">编辑文章</el-button>
+                    <el-button
+                        size="mini"
+                        type="danger"
+                        @click="handleDelete(scope.row)">删除文章</el-button>
+                </template>
+            </el-table-column>
     </el-table>
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
                    :page-size="pageSize" :total="total" layout="total, sizes, prev, pager, next, jumper"></el-pagination>
 
-        <el-dialog title="创建索引" :visible.sync="dialogVisible" width="30%">
+        <el-dialog title="创建文章" :visible.sync="dialogVisible" width="30%">
             <el-form ref="form" :model="createArticleFrom" label-width="80px">
                 <el-form-item label="文章名称">
                     <el-input v-model="createArticleFrom.name"></el-input>
@@ -111,6 +124,39 @@
             </span>
         </el-dialog>
 
+
+        <el-dialog title="编辑文章" :visible.sync="updateArticleVisible" width="30%">
+            <el-form ref="form" :model="updateArticleFrom" label-width="80px">
+                <el-form-item label="文章名称">
+                    <el-input v-model="updateArticleFrom.name"></el-input>
+                </el-form-item>
+                <el-form-item label="文章地址">
+                    <el-input v-model="updateArticleFrom.url"></el-input>
+                </el-form-item>
+                <el-form-item label="完成状态">
+                    <el-switch
+                        v-model="updateArticleFrom.state"
+                        active-value="1"
+                        inactive-value="0">
+                    </el-switch>
+                </el-form-item>
+                <el-form-item label="文章类别">
+                    <el-cascader
+                        v-model="updateArticleFrom.categoryIds"
+                        :options="categoryOptions"
+                        :show-all-levels="false"
+                        :props="{emitPath:false, multiple :true, checkStrictly: true,value: 'id',label:'name' }"
+                        clearable>
+                    </el-cascader>
+                </el-form-item>
+                <!-- 其他表单项 -->
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="updateArticleVisible = false">取 消</el-button>
+                <el-button type="primary" @click="handleEdit" :loading="false">确 定</el-button>
+            </span>
+        </el-dialog>
+
     </div>
 </template>
 
@@ -131,7 +177,15 @@ export default {
             categoryType: "ARTICLE",
             dialogVisible: false,
             categoryVisible: false,
+            updateArticleVisible: false,
             createArticleFrom: {
+                name: '',
+                url: '',
+                state: 0,
+                categoryIds: [],
+            },
+            updateArticleFrom: {
+                id: null,
                 name: '',
                 url: '',
                 state: 0,
@@ -242,6 +296,35 @@ export default {
          * @returns {Promise<void>}
          */
         async updateArticleState(row) {
+            console.log(row)
+        },
+
+        /**
+         * 更新文章
+         * @returns {Promise<void>}
+         */
+        async handleEdit() {
+            try {
+                const response = await this.axios.put('/api/cyzArticle/update', this.updateArticleFrom);
+                this.$message({
+                    message: response.data.message,
+                    type: 'success'
+                });
+                this.refreshList()
+                this.updateArticleFrom = {}
+            } catch (error) {
+                console.log(error)
+            }
+
+            // 表单验证和提交逻辑
+            this.updateArticleVisible = false;
+        },
+        /**
+         * 更新文章状态
+         * @param row
+         * @returns {Promise<void>}
+         */
+        async handleDelete(row) {
             console.log(row)
         },
 
