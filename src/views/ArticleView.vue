@@ -1,21 +1,42 @@
 <template>
     <div>
         <el-button @click="refreshList">查询</el-button>
-        <el-button @click="dialogVisible = true">创建索引</el-button>
-        <el-button @click="categoryVisible = true">创建类别</el-button>
+        <el-button @click="dialogVisible = true;getAllCategories()">创建索引</el-button>
+        <el-button @click="categoryVisible = true;getAllCategories()">创建类别</el-button>
+        <el-input style="width: 200px;margin-left: 10px"  v-model="pageArticleFrom.name" placeholder="查询文章名"></el-input>
+        <el-cascader style="width: 200px;margin-left: 10px;"
+                     v-model="pageArticleFrom.categoryId"
+                     :options="categoryOptions"
+                     placeholder="查询文章类别"
+                     :show-all-levels="true"
+                     :props="{emitPath:false, multiple :false, checkStrictly: true,value: 'id',label:'name' }"
+                     clearable>
+        </el-cascader>
 
         <el-table
         :data="tableData"
         style="width: 100%">
             <el-table-column
                 prop="name"
-                label="文章名称"
-                width="180">
+                label="文章名称">
+            </el-table-column>
+            <el-table-column
+                prop="url"
+                label="地址">
+            </el-table-column>
+            <el-table-column
+                prop="createTime"
+                label="创建时间">
+            </el-table-column>
+
+            <el-table-column
+                prop="categoryName"
+                label="类别名称">
             </el-table-column>
             <el-table-column
                 prop="state"
                 label="完成状态"
-                width="180">
+                width="100">
 
                 <template slot-scope="scope">
                     <el-switch
@@ -26,10 +47,6 @@
                     />
                 </template>
             </el-table-column>
-        <el-table-column
-            prop="categoryName"
-            label="文章类别">
-        </el-table-column>
     </el-table>
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
                    :page-size="pageSize" :total="total" layout="total, sizes, prev, pager, next, jumper"></el-pagination>
@@ -78,7 +95,13 @@
                     <el-input v-model="createCategoryFrom.sort"></el-input>
                 </el-form-item>
                 <el-form-item label="父类别">
-                    <el-input v-model="createCategoryFrom.parentId"></el-input>
+                    <el-cascader
+                        v-model="createCategoryFrom.parentId"
+                        :options="categoryOptions"
+                        :show-all-levels="true"
+                        :props="{emitPath:false, multiple :false, checkStrictly: true,value: 'id',label:'name' }"
+                        clearable>
+                    </el-cascader>
                 </el-form-item>
                 <!-- 其他表单项 -->
             </el-form>
@@ -99,7 +122,12 @@ export default {
             currentPage: 1,
             pageSize: 10,
             total: 0,
-            name: null,
+            pageArticleFrom: {
+                name: null,
+                categoryId: null,
+            },
+
+
             categoryType: "ARTICLE",
             dialogVisible: false,
             categoryVisible: false,
@@ -113,7 +141,7 @@ export default {
                 name: '',
                 icon: '',
                 sort: 0,
-                parentId: 0,
+                parentId: null,
                 categoryType: this.categoryType
             },
             categoryOptions: [],
@@ -136,11 +164,13 @@ export default {
             // 假设使用axios发起请求获取数据
 
             try {
-                const params = {}
-                params.pageSize = this.pageSize
-                params.pageNum = this.currentPage
-                params.name = this.name
-                const response = await this.axios.get('/api/cyzArticle/pages',params);
+                const params = {
+                    pageSize: this.pageSize,
+                    pageNum: this.currentPage,
+                    name: this.pageArticleFrom.name,
+                    categoryId: this.pageArticleFrom.categoryId
+                };
+                const response = await this.axios.get('/api/cyzArticle/pages',{params});
                 this.tableData = response.data.data.rows
 
                 this.total = response.data.data.total
@@ -214,6 +244,7 @@ export default {
         async updateArticleState(row) {
             console.log(row)
         },
+
 
         /**
          * 获取类别树
