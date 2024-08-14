@@ -282,7 +282,6 @@ export default {
             try {
                 this.createCategoryFrom.categoryType = this.categoryType
                 const response = await this.axios.post('/api/categories/insert', this.createCategoryFrom);
-                console.log(response.data)
                 this.$message({
                     message: response.data.message,
                     type: 'success'
