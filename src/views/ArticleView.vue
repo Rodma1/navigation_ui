@@ -4,6 +4,8 @@
         <el-button @click="dialogVisible = true;getAllCategories()">创建文章</el-button>
 
         <el-button @click="categoryVisible = true;getAllCategories()">创建类别</el-button>
+        <el-button @click="handleBatchDelete()">删除文章</el-button>
+
         <el-input style="width: 200px;margin-left: 10px"  v-model="pageArticleFrom.name" placeholder="查询文章名"></el-input>
         <el-cascader style="width: 200px;margin-left: 10px;"
                      v-model="pageArticleFrom.categoryId"
@@ -16,7 +18,9 @@
 
         <el-table
         :data="tableData"
-        style="width: 100%">
+        style="width: 100%" ref="multipleTable" @selection-change="handleSelectionChange">
+            <el-table-column type="selection" width="55">
+            </el-table-column>
             <el-table-column
                 prop="name"
                 label="文章名称">
@@ -196,7 +200,7 @@ export default {
                 state: 0,
             },
             deleteArticleFrom: {
-                id: null,
+                ids: [],
             },
             createCategoryFrom: {
                 name: '',
@@ -206,7 +210,8 @@ export default {
                 categoryType: this.categoryType
             },
             categoryOptions: [],
-            categoryOptionsValue: ''
+            categoryOptionsValue: '',
+            multipleSelection: []
         }
     },
     methods: {
@@ -216,6 +221,12 @@ export default {
             this.getPage()
             this.currentPage = 1
             this.pageSize = 10
+        },
+        handleSelectionChange(val) {
+            this.multipleSelection = [];
+            val.forEach(element => {
+                this.multipleSelection.push(element.id)
+            });
         },
         /**
          * 获取文档列表数据
@@ -348,7 +359,30 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(async () => {
-                this.deleteArticleFrom.id = row.id
+                this.deleteArticleFrom.ids = [row.id]
+                const response = await this.axios.delete('/api/cyzArticle/delete', {data:this.deleteArticleFrom});
+                this.$message({
+                    message: response.data.message,
+                    type: 'success'
+                });
+                this.refreshList()
+
+            }).catch((error) => {
+                console.log(error)
+            });
+        },
+
+        /**
+         * 批量删除文章
+         * @returns {Promise<void>}
+         */
+        async handleBatchDelete() {
+            this.$confirm('此操作将批量删除文章'+ ', 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(async () => {
+                this.deleteArticleFrom.ids = this.multipleSelection
                 const response = await this.axios.delete('/api/cyzArticle/delete', {data:this.deleteArticleFrom});
                 this.$message({
                     message: response.data.message,
