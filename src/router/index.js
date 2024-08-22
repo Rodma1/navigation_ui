@@ -6,6 +6,8 @@ import AboutView from '../views/AboutView.vue'
 import NavMenuView from '../views/NavMenuView.vue'
 import ElasticsearchView from '../views/ElasticsearchView.vue'
 import ArticleView from "@/views/ArticleView.vue";
+import PhrasesView from "@/views/PhrasesView.vue";
+
 // import { component } from 'vue/types/umd'
 Vue.use(VueRouter)
 
@@ -46,6 +48,11 @@ const routes = [
         path: '/article',
         name: 'article',
         component: ArticleView
+      },
+      {
+        path: '/phrases',
+        name: 'phrases',
+        component: PhrasesView
       },
     
     ]
