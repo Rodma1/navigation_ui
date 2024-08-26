@@ -64,7 +64,7 @@
         <el-dialog title="创建句子" :visible.sync="dialogVisible" width="30%">
             <el-form ref="form" :model="createPhrasesFrom" label-width="80px">
                 <el-form-item label="句子">
-                    <el-input v-model="createPhrasesFrom.sentence"></el-input>
+                    <el-input   type="textarea" autosize  v-model="createPhrasesFrom.sentence"></el-input>
                 </el-form-item>
                 <el-form-item label="句子类别">
                     <el-cascader
@@ -122,7 +122,7 @@
         <el-dialog title="编辑句子" :visible.sync="updatePhrasesVisible" width="30%">
             <el-form ref="form" :model="updatePhrasesFrom" label-width="80px">
                 <el-form-item label="句子">
-                    <el-input v-model="updatePhrasesFrom.sentence"></el-input>
+                    <el-input   type="textarea" autosize v-model="updatePhrasesFrom.sentence"></el-input>
                 </el-form-item>
                 <el-form-item label="句子类别">
                     <el-cascader

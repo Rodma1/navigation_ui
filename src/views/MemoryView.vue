@@ -37,8 +37,9 @@
 
         <el-dialog title="创建备忘录" :visible.sync="dialogVisible" width="30%">
             <el-form ref="form" :model="createMemoryFrom" label-width="80px">
-                <el-form-item label="备忘录内容">
-                    <el-input v-model="createMemoryFrom.content"></el-input>
+                <el-form-item label="内容" >
+                    <el-input   type="textarea"
+                                autosize v-model="createMemoryFrom.content"></el-input>
                 </el-form-item>
                 <!-- 其他表单项 -->
             </el-form>
@@ -51,8 +52,8 @@
 
         <el-dialog title="编辑备忘录" :visible.sync="updateMemoryVisible" width="30%">
             <el-form ref="form" :model="updateMemoryFrom" label-width="80px">
-                <el-form-item label="备忘录内容">
-                    <el-input v-model="updateMemoryFrom.content"></el-input>
+                <el-form-item label="内容">
+                    <el-input  type="textarea" autosize v-model="updateMemoryFrom.content"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
