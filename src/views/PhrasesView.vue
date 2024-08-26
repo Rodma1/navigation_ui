@@ -29,7 +29,10 @@
                     prop="createTime"
                     label="创建时间">
             </el-table-column>
-
+            <el-table-column
+                prop="categoryName"
+                label="类别名称">
+            </el-table-column>
             <el-table-column
                 align="right" label="推荐等级">
                 <template slot-scope="scope">

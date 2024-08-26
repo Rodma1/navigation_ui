@@ -30,7 +30,8 @@ export default {
                 { path: '/menu', title: '收集的网站'},
                 { path: '/elasticsearch', title: 'es的基本操作'},
                 { path: '/article', title: '我的文章'},
-                { path: '/phrases', title: '优美句子'}
+                { path: '/phrases', title: '优美句子'},
+                { path: '/memory', title: '备忘录'}
             ]
         };
     },
