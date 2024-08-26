@@ -7,6 +7,8 @@
         <el-button @click="handleBatchDelete()">删除文章</el-button>
 
         <el-input style="width: 200px;margin-left: 10px"  v-model="pageArticleFrom.name" placeholder="查询文章名"></el-input>
+        <el-input style="width: 200px;margin-left: 10px"  v-model="pageArticleFrom.url" placeholder="查询文章地址"></el-input>
+
         <el-cascader style="width: 200px;margin-left: 10px;"
                      v-model="pageArticleFrom.categoryId"
                      :options="categoryOptions"
@@ -175,6 +177,8 @@ export default {
             pageArticleFrom: {
                 name: null,
                 categoryId: null,
+                url: null,
+
             },
 
 
@@ -240,6 +244,7 @@ export default {
                     pageSize: this.pageSize,
                     pageNum: this.currentPage,
                     name: this.pageArticleFrom.name,
+                    url: this.pageArticleFrom.url,
                     categoryId: this.pageArticleFrom.categoryId
                 };
                 const response = await this.axios.get('/api/cyzArticle/pages',{params});
