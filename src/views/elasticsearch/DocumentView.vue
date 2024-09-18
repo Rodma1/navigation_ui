@@ -3,6 +3,13 @@
         <el-button @click="refreshList">查询</el-button>
         <el-button type="danger" @click="batchDelete">批量删除</el-button>
         <el-button type="primary" @click="showCreateDialog">创建 JSON 数据</el-button>
+        <el-input style="width: 200px;margin-left: 10px"  v-model="documentId" placeholder="根据文章Id查询"></el-input>
+
+        <el-select v-model="indices"  multiple  placeholder="请选择">
+            <el-option v-for="item in indexNames" :key="item" :label="item" :value="item">
+            </el-option>
+        </el-select>
+
         <b style="margin-left: 5%;">总数： {{ count }}</b>
         <el-dialog title="创建 JSON 数据" :visible.sync="createDialogVisible" width="30%" @close="resetCreateForm">
             <el-input type="textarea" v-model="newJson" placeholder="请输入 JSON 数据" :rows="10"></el-input>
@@ -35,7 +42,7 @@
 
     </div>
 </template>
-  
+
 <script>
 
 export default {
@@ -55,7 +62,9 @@ export default {
             operationCategory: "DOCUMENT",
             count: 0,
             indexNames: [],
-            selectIndex: ''
+            selectIndex: '',
+            documentId: '',
+            indices:[],
         };
     },
 
@@ -81,9 +90,20 @@ export default {
             // 假设使用axios发起请求获取数据
 
             try {
+
+                let names = [];
+                if (this.indices.length === 0 || !this.indices) {
+                    await this.getindexNames()
+                    names =  this.indexNames;
+                } else {
+                    names = this.indices;
+                }
+
                 const params = this.getParams("PAGE")
                 params.pageSize = this.pageSize
                 params.pageNum = this.currentPage
+                params.documentId = this.documentId
+                params.indices = names
                 const response = await this.axios.post('/api/elasticsearch/operation', params);
                 this.jsonData = response.data.data
                 console.log("查询" + this.jsonData)
@@ -200,7 +220,7 @@ export default {
     // }
 };
 </script>
-  
+
 <style>
 .json-viewer-container {
     max-width: 60%;
@@ -254,4 +274,3 @@ export default {
     color: #555;
 }
 </style>
-  
