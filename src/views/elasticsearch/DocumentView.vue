@@ -4,8 +4,13 @@
         <el-button type="danger" @click="batchDelete">批量删除</el-button>
         <el-button type="primary" @click="showCreateDialog">创建 JSON 数据</el-button>
         <el-input style="width: 200px;margin-left: 10px"  v-model="documentId" placeholder="根据文章Id查询"></el-input>
+        <el-select v-model="sortOrder" placeholder="排序类型">
+            <el-option label="Asc" value="Asc"></el-option>
+            <el-option label="Desc" value="Desc"></el-option>
+        </el-select>
+        <el-input style="width: 200px;margin-left: 10px"  v-model="sortField" placeholder="要排序的字段"></el-input>
 
-        <el-select v-model="indices"  multiple  placeholder="请选择">
+        <el-select v-model="indices"  multiple  placeholder="查询的索引">
             <el-option v-for="item in indexNames" :key="item" :label="item" :value="item">
             </el-option>
         </el-select>
@@ -65,6 +70,8 @@ export default {
             selectIndex: '',
             documentId: '',
             indices:[],
+            sortOrder: '',
+            sortField: ''
         };
     },
 
@@ -103,6 +110,8 @@ export default {
                 params.pageSize = this.pageSize
                 params.pageNum = this.currentPage
                 params.documentId = this.documentId
+                params.sortField = this.sortField;
+                params.sortOrder = this.sortOrder;
                 params.indices = names
                 const response = await this.axios.post('/api/elasticsearch/operation', params);
                 this.jsonData = response.data.data
