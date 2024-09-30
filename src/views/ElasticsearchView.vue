@@ -2,6 +2,17 @@
     <div>
 
         <el-form ref="form" :inline="true" :model="form" label-width="80px">
+            <el-form-item label="选择地址: ">
+                <el-select v-model="selectHostName"  clearable  placeholder="选择连接地址"  @change="selectConnectParam()">
+                    <el-option
+                        v-for="item in connectForm"
+                        :key="item.hostName"
+                        :label="item.hostName"
+                        :value="item.hostName">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            
             <el-form-item label="协议">
                 <el-select v-model="form.scheme" clearable  placeholder="请选择协议">
                     <el-option label="http" value="http"></el-option>
@@ -35,16 +46,13 @@
                     {{ 'lucene版本 ：' + versionInfo.luceneVersion }}
                 </div>
             </el-form-item>
+
+
         </el-form>
 
-        <el-select v-model="selectHostName"  clearable  placeholder="请选择" @change="selectConnectParam()">
-            <el-option
-                v-for="item in connectForm"
-                :key="item.hostName"
-                :label="item.hostName"
-                :value="item.hostName">
-            </el-option>
-        </el-select>
+
+
+
 
         <el-tabs v-model="activeName" @tab-click="handleTabClick">
             <el-tab-pane label="索引操作" name="first"><ElasticIndicesView :connectParam="form"/></el-tab-pane>
@@ -99,6 +107,13 @@ export default {
                 const params = this.form
                 params.operationCategory = "INFO"
                 const response = await this.axios.post('/api/elasticsearch/operation', params);
+                if (response.data.code !== 200) {
+                    this.$message({
+                        message: response.data.message,
+                        type: 'error'
+                    });
+                    return
+                }
                 this.$message({
                     message: '链接成功',
                     type: 'success'
