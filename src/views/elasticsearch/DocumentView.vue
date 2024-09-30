@@ -1,53 +1,77 @@
 <template>
-    <div class="json-viewer-container">
-        <el-button @click="refreshList">查询</el-button>
-        <el-button type="danger" @click="batchDelete">批量删除</el-button>
-        <el-button type="primary" @click="showCreateDialog">创建 JSON 数据</el-button>
-        <el-input style="width: 200px;margin-left: 10px"  v-model="documentId" placeholder="根据文章Id查询"></el-input>
-        <el-select v-model="sortOrder" placeholder="排序类型">
-            <el-option label="Asc" value="Asc"></el-option>
-            <el-option label="Desc" value="Desc"></el-option>
-        </el-select>
-        <el-input style="width: 200px;margin-left: 10px"  v-model="sortField" placeholder="要排序的字段"></el-input>
+    <div style="display: flex; justify-content: space-between;">
+        <!-- 查询条件 -->
+        <div style="width: 500px; overflow: hidden;">
+            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <el-button @click="refreshList">查询</el-button>
+                <el-button type="danger" @click="batchDelete">批量删除</el-button>
+                <el-button type="primary" @click="showCreateDialog">创建 JSON 数据</el-button>
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 10px;">
 
-        <el-select v-model="indices"  multiple  placeholder="查询的索引">
-            <el-option v-for="item in indexNames" :key="item" :label="item" :value="item">
-            </el-option>
-        </el-select>
-
-        <b style="margin-left: 5%;">总数： {{ count }}</b>
-        <el-dialog title="创建 JSON 数据" :visible.sync="createDialogVisible" width="30%" @close="resetCreateForm">
-            <el-input type="textarea" v-model="newJson" placeholder="请输入 JSON 数据" :rows="10"></el-input>
-            <el-select v-model="selectIndex" clearable placeholder="请选择">
-                <el-option v-for="item in indexNames" :key="item" :label="item" :value="item">
-                </el-option>
-            </el-select>
-
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="createDialogVisible = false">取消</el-button>
-                <el-button type="primary" @click="createJson">创建</el-button>
-            </span>
-        </el-dialog>
-        <div v-for="item in  jsonData" :key="item.id" class="json-item">
-            <el-checkbox v-model="selectedItems" :label="item.id" class="custom-checkbox">
-                <div class="checkbox-content">
-                    <span class="index-name">索引名: {{ item.index }}</span>
-                    <span class="index-id">索引id: {{ item.id }}</span>
+            <el-input style="flex: 1; margin-right: 10px;" v-model="documentId" placeholder="根据文章Id查询"></el-input>
+                <el-select v-model="indices" multiple placeholder="查询的索引" style="flex: 1;">
+                    <el-option v-for="item in indexNames" :key="item" :label="item" :value="item"></el-option>
+                </el-select>
                 </div>
+            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <el-select v-model="sortOrder" placeholder="排序类型" style="margin-right: 10px; flex: 0 0 100px;">
+                    <el-option label="Asc" value="Asc"></el-option>
+                    <el-option label="Desc" value="Desc"></el-option>
+                </el-select>
+                <el-input style="flex: 1; margin-right: 10px;" v-model="sortField" placeholder="要排序的字段"></el-input>
 
-            </el-checkbox>
+            </div>
+            <el-form :model="searchFields">
+                <el-form-item
+                    v-for="(domain, index) in searchFields"
+                    :label="'字段' + index"
+                    :key="'字段' + index"
+                    :prop="'domains.' + index + '.value'"
+                    :rules="{ required: true, message: '字段不能为空', trigger: 'blur' }"
+                    style="display: flex; align-items: center; flex-wrap: nowrap;"
+                >
+                    <el-input style=" max-width: 150px;" v-model="domain.key"></el-input>
+                    <el-input style="margin-right: 5px; max-width: 150px;" v-model="domain.value"></el-input>
+                    <el-button @click.prevent="removeDomain(domain)" style="white-space: nowrap;">删除</el-button>
+                </el-form-item>
+                <el-form-item>
+                    <el-button @click="addDomain">新增域名</el-button>
+                </el-form-item>
+            </el-form>
 
-            <el-button style="margin-left: 5%;" type="text" icon="el-icon-document-copy"
-                @click="copyJson(item.source)">复制</el-button>
-
-            <json-viewer :value="item.source" style="font-size: 18px;" :expanded="true"></json-viewer>
         </div>
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
-            :page-size="pageSize" :total="count" layout="total, sizes, prev, pager, next, jumper"></el-pagination>
 
+        <!-- JSON 数据区域 -->
+        <div class="json-viewer-container" >
+            <b style="margin-left: 5%;">总数： {{ count }}</b>
+            <b style="margin-left: 5%;">查询数: {{searchCount}}</b>s
+
+            <el-dialog title="创建 JSON 数据" :visible.sync="createDialogVisible" width="30%" @close="resetCreateForm">
+                <el-input type="textarea" v-model="newJson" placeholder="请输入 JSON 数据" :rows="10"></el-input>
+                <el-select v-model="selectIndex" clearable placeholder="请选择">
+                    <el-option v-for="item in indexNames" :key="item" :label="item" :value="item"></el-option>
+                </el-select>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="createDialogVisible = false">取消</el-button>
+                    <el-button type="primary" @click="createJson">创建</el-button>
+                </span>
+            </el-dialog>
+            <div v-for="item in jsonData" :key="item.id" class="json-item">
+                <el-checkbox v-model="selectedItems" :label="item.id" class="custom-checkbox">
+                    <div class="checkbox-content">
+                        <span class="index-name">索引名: {{ item.index }}</span>
+                        <span class="index-id">索引id: {{ item.id }}</span>
+                    </div>
+                </el-checkbox>
+                <el-button style="margin-left: 5%;" type="text" icon="el-icon-document-copy" @click="copyJson(item)">复制</el-button>
+                <json-viewer :value="item.source" style="font-size: 18px;" :expanded="true"></json-viewer>
+            </div>
+            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
+                           :page-size="pageSize" :total="count" layout="total, sizes, prev, pager, next, jumper"></el-pagination>
+        </div>
     </div>
 </template>
-
 <script>
 
 export default {
@@ -71,7 +95,9 @@ export default {
             documentId: '',
             indices:[],
             sortOrder: '',
-            sortField: ''
+            sortField: '',
+            searchFields: [],
+            searchCount: 0
         };
     },
 
@@ -113,8 +139,10 @@ export default {
                 params.sortField = this.sortField;
                 params.sortOrder = this.sortOrder;
                 params.indices = names
+                params.searchFields = this.searchFields;
                 const response = await this.axios.post('/api/elasticsearch/operation', params);
-                this.jsonData = response.data.data
+                this.jsonData = response.data.data.rows;
+                this.searchCount = response.data.data.count
                 console.log("查询" + this.jsonData)
             } catch (error) {
                 console.log(error)
@@ -222,8 +250,21 @@ export default {
             document.execCommand('copy');
             document.body.removeChild(el);
             this.$message.success('JSON 已复制到剪贴板');
+        },
+        // resetForm(formName) {
+        //     this.$refs[formName].resetFields();
+        // },
+        removeDomain(item) {
+            const index = this.searchFields.indexOf(item);
+            if (index !== -1) {
+                this.searchFields.splice(index, 1)
+            }
+        },
+        addDomain() {
+            this.searchFields.push({key: '', value: ''});
         }
     },
+
     // mounted() {
     //     this.getindexNames()
     // }
@@ -233,7 +274,7 @@ export default {
 <style>
 .json-viewer-container {
     max-width: 60%;
-    margin: 50px auto;
+    margin: 10px auto;
     padding: 20px;
     background-color: #f9f9f9;
     border-radius: 8px;

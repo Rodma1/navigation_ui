@@ -3,10 +3,12 @@
 
         <el-form ref="form" :inline="true" :model="form" label-width="80px">
             <el-form-item label="协议">
-                <el-select v-model="form.scheme" placeholder="请选择协议">
+                <el-select v-model="form.scheme" clearable  placeholder="请选择协议">
                     <el-option label="http" value="http"></el-option>
                     <el-option label="https" value="https"></el-option>
                 </el-select>
+
+
             </el-form-item>
             <el-form-item label="IP地址">
                 <el-input style="width: 300px;" v-model="form.hostName"></el-input>
@@ -35,6 +37,14 @@
             </el-form-item>
         </el-form>
 
+        <el-select v-model="selectHostName"  clearable  placeholder="请选择" @change="selectConnectParam()">
+            <el-option
+                v-for="item in connectForm"
+                :key="item.hostName"
+                :label="item.hostName"
+                :value="item.hostName">
+            </el-option>
+        </el-select>
 
         <el-tabs v-model="activeName" @tab-click="handleTabClick">
             <el-tab-pane label="索引操作" name="first"><ElasticIndicesView :connectParam="form"/></el-tab-pane>
@@ -44,6 +54,8 @@
             <el-tab-pane label="任务列表" name="fifty"><TaskView :connectParam="form"></TaskView></el-tab-pane>
 
         </el-tabs>
+
+
     </div>
 </template>
 
@@ -58,22 +70,23 @@ export default {
     data() {
         return {
             form: {
-                scheme: 'https',
-                hostName: '192.168.248.128',
-                userName: 'elastic',
-                password: 'chenyunzhi123',
-                port: '9200',
-
+                scheme: '',
+                hostName: '',
+                userName: '',
+                password: '',
+                port: '',
                 operationCategory: 'INFO',
- 
+
             },
+            connectForm: [],
             versionInfo: {
                 "number": "-",
                 "buildType": "-",
                 "luceneVersion": "-"
             },
 
-             activeName: ''
+            activeName: '',
+            selectHostName: '',
         }
     },
     methods: {
@@ -101,7 +114,20 @@ export default {
         handleTabClick(tab) {
             // console.log(tab, event);
             this.activeName = tab.name
-        }
+        },
+        async getConnectForm() {
+            const response = await this.axios.get('/api/elasticsearch/connectParam');
+            this.connectForm = response.data.data
+        },
+        selectConnectParam(){
+            const item = this.connectForm.find(item1=> item1.hostName === this.selectHostName)
+            console.log("nidf0" + item)
+            this.form = item
+        },
+
+    },
+    mounted() {
+        this.getConnectForm()
     }
 }
 </script>

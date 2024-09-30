@@ -66,7 +66,7 @@
         </el-dialog>
     </div>
 </template>
-  
+
 <script>
 export default {
     props: {
@@ -203,8 +203,8 @@ export default {
             });
         },
     },
-    mounted() {
-        this.fetchData()
-    }
+    // mounted() {
+    //     this.fetchData()
+    // }
 }
 </script>
