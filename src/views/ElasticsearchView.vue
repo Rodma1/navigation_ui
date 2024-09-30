@@ -12,7 +12,7 @@
                     </el-option>
                 </el-select>
             </el-form-item>
-            
+
             <el-form-item label="协议">
                 <el-select v-model="form.scheme" clearable  placeholder="请选择协议">
                     <el-option label="http" value="http"></el-option>
@@ -73,6 +73,7 @@ import DocumentView from "./elasticsearch/DocumentView.vue"
 import AliasesView from "./elasticsearch/AliasesView.vue"
 import TemplateView from "./elasticsearch/TemplateView.vue"
 import TaskView from "@/views/elasticsearch/TaskView.vue";
+
 export default {
     components: {TaskView, ElasticIndicesView, DocumentView, AliasesView, TemplateView },
     data() {
@@ -92,16 +93,11 @@ export default {
                 "buildType": "-",
                 "luceneVersion": "-"
             },
-
             activeName: '',
             selectHostName: '',
         }
     },
     methods: {
-        onSubmit() {
-            console.log(this.form)
-            console.log('submit!');
-        },
         async linkTest() {
             try {
                 const params = this.form
@@ -119,7 +115,6 @@ export default {
                     type: 'success'
                 });
                 this.versionInfo = response.data.data
-                console.log(this.versionInfo)
                 this.activeName = ''
             } catch (error) {
                 this.$message.error('链接失败');
@@ -127,7 +122,6 @@ export default {
 
         },
         handleTabClick(tab) {
-            // console.log(tab, event);
             this.activeName = tab.name
         },
         async getConnectForm() {
@@ -135,9 +129,7 @@ export default {
             this.connectForm = response.data.data
         },
         selectConnectParam(){
-            const item = this.connectForm.find(item1=> item1.hostName === this.selectHostName)
-            console.log("nidf0" + item)
-            this.form = item
+            this.form = this.connectForm.find(item1 => item1.hostName === this.selectHostName)
         },
 
     },

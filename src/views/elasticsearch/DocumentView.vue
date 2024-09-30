@@ -13,7 +13,7 @@
                 <el-select v-model="indices" multiple placeholder="查询的索引" style="flex: 1;">
                     <el-option v-for="item in indexNames" :key="item" :label="item" :value="item"></el-option>
                 </el-select>
-                </div>
+            </div>
             <div style="display: flex; align-items: center; margin-bottom: 10px;">
                 <el-select v-model="sortOrder" placeholder="排序类型" style="margin-right: 10px; flex: 0 0 100px;">
                     <el-option label="Asc" value="Asc"></el-option>
@@ -22,6 +22,22 @@
                 <el-input style="flex: 1; margin-right: 10px;" v-model="sortField" placeholder="要排序的字段"></el-input>
 
             </div>
+            <el-form :model="formData">
+                <div class="block">
+                    <span class="demonstration">输入时间</span>
+                    <el-date-picker
+                        v-model="formData.times"
+                        type="datetimerange"
+                        range-separator="至"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
+                        value-format="yyyy-MM-dd HH:mm:ss">
+                    </el-date-picker>
+                    <el-form-item>
+                        <el-input style="max-width: 150px;" v-model="formData.field"></el-input>
+                    </el-form-item>
+                </div>
+            </el-form>
             <el-form :model="searchFields">
                 <el-form-item
                     v-for="(domain, index) in searchFields"
@@ -36,7 +52,7 @@
                     <el-button @click.prevent="removeDomain(domain)" style="white-space: nowrap;">删除</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button @click="addDomain">新增域名</el-button>
+                    <el-button @click="addDomain">新增查询字段</el-button>
                 </el-form-item>
             </el-form>
 
@@ -45,7 +61,7 @@
         <!-- JSON 数据区域 -->
         <div class="json-viewer-container" >
             <b style="margin-left: 5%;">总数： {{ count }}</b>
-            <b style="margin-left: 5%;">查询数: {{searchCount}}</b>s
+            <b style="margin-left: 5%;">查询数: {{searchCount}}</b>
 
             <el-dialog title="创建 JSON 数据" :visible.sync="createDialogVisible" width="30%" @close="resetCreateForm">
                 <el-input type="textarea" v-model="newJson" placeholder="请输入 JSON 数据" :rows="10"></el-input>
@@ -97,7 +113,9 @@ export default {
             sortOrder: '',
             sortField: '',
             searchFields: [],
-            searchCount: 0
+            searchCount: 0,
+            times: '',
+            field: '' // 其他字段
         };
     },
 
@@ -123,6 +141,7 @@ export default {
             // 假设使用axios发起请求获取数据
 
             try {
+                console.log("ceshi" + this.times)
 
                 let names = [];
                 if (this.indices.length === 0 || !this.indices) {
@@ -132,7 +151,16 @@ export default {
                     names = this.indices;
                 }
 
+
                 const params = this.getParams("PAGE")
+                if (this.times.length !== 0 && this.times) {
+                    const timeSearch = {}
+                    // const timesArray = this.times.split(',');
+                    timeSearch.beginTime = this.formData.times[0],
+                    timeSearch.endTime = this.formData.times[1],
+                    timeSearch.field = this.formData.field
+                    params.timeSearch = timeSearch
+                }
                 params.pageSize = this.pageSize
                 params.pageNum = this.currentPage
                 params.documentId = this.documentId
@@ -143,7 +171,6 @@ export default {
                 const response = await this.axios.post('/api/elasticsearch/operation', params);
                 this.jsonData = response.data.data.rows;
                 this.searchCount = response.data.data.count
-                console.log("查询" + this.jsonData)
             } catch (error) {
                 console.log(error)
             }
