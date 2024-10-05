@@ -35,7 +35,7 @@
                         :default-time="['00:00:00', '23:59:59']">
                     </el-date-picker>
                     <el-form-item>
-                        <el-input style="max-width: 150px;" v-model="field"></el-input>
+                        <el-input style="max-width: 150px;" v-model="field" placeholder="时间排序字段"></el-input>
                     </el-form-item>
                 </div>
             </el-form>
