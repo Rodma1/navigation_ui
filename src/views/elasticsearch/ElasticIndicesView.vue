@@ -146,7 +146,7 @@ export default {
                     message: response.data.message,
                     type: 'success'
                 });
-                this.fetchData()
+                await this.fetchData()
                 this.createIndexFrom.indexName = ''
             } catch (error) {
                 console.log(error)
@@ -196,7 +196,7 @@ export default {
                     message: response.data.message,
                     type: 'success'
                 });
-                this.fetchData()
+                await this.fetchData()
 
             }).catch((error) => {
                 console.log(error)

@@ -22,19 +22,20 @@
                 <el-input style="flex: 1; margin-right: 10px;" v-model="sortField" placeholder="要排序的字段"></el-input>
 
             </div>
-            <el-form :model="formData">
+            <el-form :model="times">
                 <div class="block">
                     <span class="demonstration">输入时间</span>
                     <el-date-picker
-                        v-model="formData.times"
+                        v-model="times"
                         type="datetimerange"
                         range-separator="至"
                         start-placeholder="开始日期"
                         end-placeholder="结束日期"
-                        value-format="yyyy-MM-dd HH:mm:ss">
+                        value-format="yyyy-MM-dd HH:mm:ss"
+                        :default-time="['00:00:00', '23:59:59']">
                     </el-date-picker>
                     <el-form-item>
-                        <el-input style="max-width: 150px;" v-model="formData.field"></el-input>
+                        <el-input style="max-width: 150px;" v-model="field"></el-input>
                     </el-form-item>
                 </div>
             </el-form>
@@ -141,7 +142,7 @@ export default {
             // 假设使用axios发起请求获取数据
 
             try {
-                console.log("ceshi" + this.times)
+                console.log("ceshi" + this.times[0])
 
                 let names = [];
                 if (this.indices.length === 0 || !this.indices) {
@@ -153,12 +154,12 @@ export default {
 
 
                 const params = this.getParams("PAGE")
-                if (this.times.length !== 0 && this.times) {
+                if (this.times.length !== 0 && this.times && this.field) {
                     const timeSearch = {}
                     // const timesArray = this.times.split(',');
-                    timeSearch.beginTime = this.formData.times[0],
-                    timeSearch.endTime = this.formData.times[1],
-                    timeSearch.field = this.formData.field
+                    timeSearch.beginTime = this.times[0]
+                    timeSearch.endTime = this.times[1]
+                    timeSearch.field = this.field
                     params.timeSearch = timeSearch
                 }
                 params.pageSize = this.pageSize
