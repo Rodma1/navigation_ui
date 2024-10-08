@@ -142,8 +142,6 @@ export default {
             // 假设使用axios发起请求获取数据
 
             try {
-                console.log("ceshi" + this.times[0])
-
                 let names = [];
                 if (this.indices.length === 0 || !this.indices) {
                     await this.getindexNames()
