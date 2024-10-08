@@ -22,20 +22,23 @@
                 <el-input style="flex: 1; margin-right: 10px;" v-model="sortField" placeholder="要排序的字段"></el-input>
 
             </div>
-            <el-form :model="times">
+            <el-form :model="timeSearch">
                 <div class="block">
                     <span class="demonstration">输入时间</span>
                     <el-date-picker
-                        v-model="times"
+                        v-model="timeSearch.times"
                         type="datetimerange"
                         range-separator="至"
                         start-placeholder="开始日期"
                         end-placeholder="结束日期"
                         value-format="yyyy-MM-dd HH:mm:ss"
-                        :default-time="['00:00:00', '23:59:59']">
+                        :default-time="['00:00:00', '23:59:59']"
+                        clearable
+                    >
+
                     </el-date-picker>
                     <el-form-item>
-                        <el-input style="max-width: 150px;" v-model="field" placeholder="时间排序字段"></el-input>
+                        <el-input style="max-width: 150px;" v-model="timeSearch.field" placeholder="时间排序字段"></el-input>
                     </el-form-item>
                 </div>
             </el-form>
@@ -115,8 +118,11 @@ export default {
             sortField: '',
             searchFields: [],
             searchCount: 0,
-            times: '',
-            field: '' // 其他字段
+            timeSearch: {
+                times: [],
+                field: '' // 其他字段
+            }
+
         };
     },
 
@@ -152,13 +158,15 @@ export default {
 
 
                 const params = this.getParams("PAGE")
-                if (this.times.length !== 0 && this.times && this.field) {
-                    const timeSearch = {}
+                if ( this.timeSearch.times && this.timeSearch.times.length !== 0 && this.timeSearch.field) {
+                    const timesSearch = {}
                     // const timesArray = this.times.split(',');
-                    timeSearch.beginTime = this.times[0]
-                    timeSearch.endTime = this.times[1]
-                    timeSearch.field = this.field
-                    params.timeSearch = timeSearch
+                    timesSearch.beginTime = this.timeSearch.times[0]
+                    timesSearch.endTime = this.timeSearch.times[1]
+                    timesSearch.field = this.timeSearch.field
+                    params.timeSearch = timesSearch
+                } else {
+                    params.timeSearch = {}
                 }
                 params.pageSize = this.pageSize
                 params.pageNum = this.currentPage
