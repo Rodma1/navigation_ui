@@ -5,13 +5,13 @@ import router from './router'
 import store from './store'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import axios from 'axios'
+import axios from '@/utils/axios';
 import JsonViewer from 'vue-json-viewer'
 import JsonEditor  from 'vue-jsoneditor';
 
 Vue.prototype.axios = axios
-Vue.use(JsonViewer) 
-Vue.use(JsonEditor) 
+Vue.use(JsonViewer)
+Vue.use(JsonEditor)
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 new Vue({
