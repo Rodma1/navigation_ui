@@ -60,6 +60,7 @@ export default {
                 { path: '/about', title: '关于我' },
                 { path: '/menu', title: '收集的网站'},
                 { path: '/elasticsearch', title: 'es的基本操作'},
+                { path: '/file-upload', title: '文件上传'},
                 { path: '/article', title: '我的文章', requireLogin: true},
                 { path: '/phrases', title: '优美句子', requireLogin: true},
                 { path: '/memory', title: '备忘录', requireLogin: true}
