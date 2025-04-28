@@ -9,6 +9,7 @@ import ArticleView from "@/views/ArticleView.vue";
 import PhrasesView from "@/views/PhrasesView.vue";
 import MemoryView from "@/views/MemoryView.vue";
 import LoginView from "@/views/LoginView.vue";  // 导入登录组件
+import FileUpload from '@/views/FileUpload.vue'
 
 Vue.use(VueRouter);
 
@@ -57,6 +58,14 @@ const routes = [
         name: 'memory',
         component: MemoryView,
         meta: { requiresAuth: true } // 需要登录
+      },
+      {
+        path: '/file-upload',
+        name: 'FileUpload',
+        component: FileUpload,
+        meta: {
+          title: '文件上传'
+        }
       }
     ]
   },
