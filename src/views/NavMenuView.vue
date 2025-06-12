@@ -61,9 +61,12 @@ export default {
                 { path: '/menu', title: '收集的网站'},
                 { path: '/elasticsearch', title: 'es的基本操作'},
                 { path: '/file-upload', title: '文件上传'},
+
                 { path: '/article', title: '我的文章', requireLogin: true},
                 { path: '/phrases', title: '优美句子', requireLogin: true},
-                { path: '/memory', title: '备忘录', requireLogin: true}
+                { path: '/memory', title: '备忘录', requireLogin: true},
+                { path: '/task/plan', title: '任务计划'},
+                { path: '/task/checkin', title: '任务打卡'},
             ],
             isLoggedIn: false,  // 登录状态
         };
@@ -103,7 +106,7 @@ export default {
         },
         handleLogout() {
             // 模拟登出逻辑，可以调用后端API
-            this.axios.post('/api/user/logout')
+            this.axios.post('/user/logout')
                 .then(response => {
                     const code = response.data.code;
                     if (code !== 200) {

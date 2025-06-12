@@ -84,7 +84,7 @@ export default {
   methods: {
     async loadBuckets() {
       try {
-        const response = await this.axios.get('/api/file/getAllBuckets');
+        const response = await this.axios.get('/file/getAllBuckets');
         if (response.data.code === 200) {
           this.buckets = response.data.data;
           if (this.buckets.length > 0) {
@@ -121,7 +121,7 @@ export default {
       if (!this.selectedBucket) return;
       
       try {
-        const response = await this.axios.get('/api/file/getFileList', {
+        const response = await this.axios.get('/file/getFileList', {
           params: {
             bucketName: this.selectedBucket
           }

@@ -102,7 +102,7 @@ export default {
             try {
                 const params = this.form
                 params.operationCategory = "INFO"
-                const response = await this.axios.post('/api/elasticsearch/operation', params);
+                const response = await this.axios.post('/elasticsearch/operation', params);
                 if (response.data.code !== 200) {
                     this.$message({
                         message: response.data.message,
@@ -125,7 +125,7 @@ export default {
             this.activeName = tab.name
         },
         async getConnectForm() {
-            const response = await this.axios.get('/api/elasticsearch/connectParam');
+            const response = await this.axios.get('/elasticsearch/connectParam');
             this.connectForm = response.data.data
         },
         selectConnectParam(){

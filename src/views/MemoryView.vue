@@ -126,7 +126,7 @@ export default {
                     content: this.pageMemoryFrom.content,
                     categoryId: this.pageMemoryFrom.categoryId
                 };
-                const response = await this.axios.get('/api/memory/pages',{params});
+                const response = await this.axios.get('/memory/pages',{params});
                 this.tableData = response.data.data.rows
 
                 this.total = response.data.data.total
@@ -152,7 +152,7 @@ export default {
          */
         async createMemory() {
             try {
-                const response = await this.axios.post('/api/memory/insert', this.createMemoryFrom);
+                const response = await this.axios.post('/memory/insert', this.createMemoryFrom);
                 console.log(response.data)
                 this.$message({
                     message: response.data.message,
@@ -175,7 +175,7 @@ export default {
          */
         async handleEdit() {
             try {
-                const response = await this.axios.put('/api/memory/update', this.updateMemoryFrom);
+                const response = await this.axios.put('/memory/update', this.updateMemoryFrom);
                 this.$message({
                     message: response.data.message,
                     type: 'success'
@@ -201,7 +201,7 @@ export default {
                 type: 'warning'
             }).then(async () => {
                 this.deleteMemoryFrom.ids = [row.id]
-                const response = await this.axios.delete('/api/memory/delete', {data:this.deleteMemoryFrom});
+                const response = await this.axios.delete('/memory/delete', {data:this.deleteMemoryFrom});
                 this.$message({
                     message: response.data.message,
                     type: 'success'
@@ -224,7 +224,7 @@ export default {
                 type: 'warning'
             }).then(async () => {
                 this.deleteMemoryFrom.ids = this.multipleSelection
-                const response = await this.axios.delete('/api/memory/delete', {data:this.deleteMemoryFrom});
+                const response = await this.axios.delete('/memory/delete', {data:this.deleteMemoryFrom});
                 this.$message({
                     message: response.data.message,
                     type: 'success'

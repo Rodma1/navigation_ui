@@ -223,7 +223,7 @@ export default {
                     sentence: this.pagePhrasesFrom.sentence,
                     categoryId: this.pagePhrasesFrom.categoryId
                 };
-                const response = await this.axios.get('/api/phrases/pages',{params});
+                const response = await this.axios.get('/phrases/pages',{params});
                 this.tableData = response.data.data.rows
 
                 this.total = response.data.data.total
@@ -250,7 +250,7 @@ export default {
          */
         async createPhrases() {
             try {
-                const response = await this.axios.post('/api/phrases/insert', this.createPhrasesFrom);
+                const response = await this.axios.post('/phrases/insert', this.createPhrasesFrom);
                 console.log(response.data)
                 this.$message({
                     message: response.data.message,
@@ -273,7 +273,7 @@ export default {
         async createPhrasesCategory() {
             try {
                 this.createCategoryFrom.categoryType = this.categoryType
-                const response = await this.axios.post('/api/categories/insert', this.createCategoryFrom);
+                const response = await this.axios.post('/categories/insert', this.createCategoryFrom);
                 this.$message({
                     message: response.data.message,
                     type: 'success'
@@ -294,7 +294,7 @@ export default {
          */
         async handleEdit() {
             try {
-                const response = await this.axios.put('/api/phrases/update', this.updatePhrasesFrom);
+                const response = await this.axios.put('/phrases/update', this.updatePhrasesFrom);
                 this.$message({
                     message: response.data.message,
                     type: 'success'
@@ -320,7 +320,7 @@ export default {
                 type: 'warning'
             }).then(async () => {
                 this.deletePhrasesFrom.ids = [row.id]
-                const response = await this.axios.delete('/api/phrases/delete', {data:this.deletePhrasesFrom});
+                const response = await this.axios.delete('/phrases/delete', {data:this.deletePhrasesFrom});
                 this.$message({
                     message: response.data.message,
                     type: 'success'
@@ -343,7 +343,7 @@ export default {
                 type: 'warning'
             }).then(async () => {
                 this.deletePhrasesFrom.ids = this.multipleSelection
-                const response = await this.axios.delete('/api/phrases/delete', {data:this.deletePhrasesFrom});
+                const response = await this.axios.delete('/phrases/delete', {data:this.deletePhrasesFrom});
                 this.$message({
                     message: response.data.message,
                     type: 'success'
@@ -363,7 +363,7 @@ export default {
             // 假设使用axios发起请求获取数据
 
             try {
-                const response = await this.axios.get('/api/categories/getAllCategoryTree/' + this.categoryType);
+                const response = await this.axios.get('/categories/getAllCategoryTree/' + this.categoryType);
                 this.categoryOptions = response.data.data
             } catch (error) {
                 console.log(error)

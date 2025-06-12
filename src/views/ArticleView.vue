@@ -19,58 +19,58 @@
         </el-cascader>
 
         <el-table
-        :data="tableData"
-        style="width: 100%" ref="multipleTable" @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="55">
-            </el-table-column>
-            <el-table-column
-                prop="name"
-                label="文章名称">
-            </el-table-column>
-            <el-table-column
-                prop="url"
-                label="地址">
-            </el-table-column>
-            <el-table-column
-                prop="createTime"
-                label="创建时间">
-            </el-table-column>
+            :data="tableData"
+            style="width: 100%"
+            ref="multipleTable"
+            @selection-change="handleSelectionChange"
+        >
+            <el-table-column type="selection" width="55" />
+            
+            <el-table-column prop="name" label="文章名称" />
+            <el-table-column prop="url" label="地址" />
+            <el-table-column prop="createTime" label="创建时间" />
+            <el-table-column prop="categoryName" label="类别名称" />
 
-            <el-table-column
-                prop="categoryName"
-                label="类别名称">
-            </el-table-column>
-            <el-table-column
-                prop="state"
-                label="完成状态"
-                width="100">
-
-                <template slot-scope="scope">
+            <el-table-column prop="state" label="完成状态" width="100">
+                <template #default="scope">
                     <el-switch
                         v-model="scope.row.state"
-                        active-value="1"
-                        inactive-value="0"
-                        @change= "updateArticleState(scope.row)"
+                        :active-value="1"
+                        :inactive-value="0"
+                        active-color="#13ce66"
+                        inactive-color="#ff4949"
+                        @click = "updateArticleState(scope.row)"
                     />
                 </template>
             </el-table-column>
-            <el-table-column
-                align="right">
-                <template slot-scope="scope">
+
+            <el-table-column align="right">
+                <template #default="{ row }">
                     <el-button
                         size="mini"
-                        @click="updateArticleFrom=scope.row;updateArticleVisible = true;getAllCategories()">编辑文章</el-button>
+                        @click="updateArticleFrom=row;updateArticleVisible = true;getAllCategories()">编辑文章</el-button>
                     <el-button
                         size="mini"
                         type="danger"
-                        @click="handleDelete(scope.row)">删除文章</el-button>
+                        @click="handleDelete(row)"
+                    >
+                        删除文章
+                    </el-button>
                 </template>
             </el-table-column>
-    </el-table>
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
-                   :page-size="pageSize" :total="total" layout="total, sizes, prev, pager, next, jumper"></el-pagination>
+        </el-table>
 
-        <el-dialog title="创建文章" :visible.sync="dialogVisible" width="30%">
+        <el-pagination
+            :current-page="currentPage"
+            :page-size="pageSize"
+            :total="total"
+            :page-sizes="[10, 20, 30, 50]"
+            layout="total, sizes, prev, pager, next, jumper"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+        />
+
+        <el-dialog title="创建文章"  v-model="dialogVisible" width="50%" height="50%">
             <el-form ref="form" :model="createArticleFrom" label-width="80px">
                 <el-form-item label="文章名称">
                     <el-input v-model="createArticleFrom.name"></el-input>
@@ -167,6 +167,8 @@
 </template>
 
 <script>
+import {ElMessage} from "element-plus";
+
 export default {
     data() {
         return {
@@ -222,9 +224,10 @@ export default {
         // 刷新
         refreshList() {
             // 执行刷新列表的操作
-            this.getPage()
             this.currentPage = 1
             this.pageSize = 10
+            this.getPage()
+
         },
         handleSelectionChange(val) {
             this.multipleSelection = [];
@@ -247,11 +250,14 @@ export default {
                     url: this.pageArticleFrom.url,
                     categoryId: this.pageArticleFrom.categoryId
                 };
-                const response = await this.axios.get('/api/cyzArticle/pages',{params});
-                this.tableData = response.data.data.rows
+                const response = await this.axios.get('/cyzArticle/pages',{params});
+                this.tableData = response.data.data.rows.map(row => ({
+                    ...row,
+                    state: Number(row.state)
+                }));
 
                 this.total = response.data.data.total
-                console.log("查询" + this.tableData)
+                // console.log("查询" + this.tableData)
             } catch (error) {
                 console.log(error)
             }
@@ -274,7 +280,7 @@ export default {
          */
         async createArticle() {
             try {
-                const response = await this.axios.post('/api/cyzArticle/insert', this.createArticleFrom);
+                const response = await this.axios.post('/cyzArticle/insert', this.createArticleFrom);
                 console.log(response.data)
                 this.$message({
                     message: response.data.message,
@@ -297,7 +303,7 @@ export default {
         async createArticleCategory() {
             try {
                 this.createCategoryFrom.categoryType = this.categoryType
-                const response = await this.axios.post('/api/categories/insert', this.createCategoryFrom);
+                const response = await this.axios.post('/categories/insert', this.createCategoryFrom);
                 this.$message({
                     message: response.data.message,
                     type: 'success'
@@ -321,7 +327,7 @@ export default {
             try {
                 this.updateArticleStatusFrom.id = row.id
                 this.updateArticleStatusFrom.state = row.state
-                const response = await this.axios.put('/api/cyzArticle/updateStatus', this.updateArticleStatusFrom);
+                const response = await this.axios.put('/cyzArticle/updateStatus', this.updateArticleStatusFrom);
                 this.$message({
                     message: response.data.message,
                     type: 'success'
@@ -330,6 +336,7 @@ export default {
                 this.updateArticleStatusFrom = {}
             } catch (error) {
                 console.log(error)
+                ElMessage.error('更新失败')
             }
         },
 
@@ -339,7 +346,7 @@ export default {
          */
         async handleEdit() {
             try {
-                const response = await this.axios.put('/api/cyzArticle/update', this.updateArticleFrom);
+                const response = await this.axios.put('/cyzArticle/update', this.updateArticleFrom);
                 this.$message({
                     message: response.data.message,
                     type: 'success'
@@ -365,7 +372,7 @@ export default {
                 type: 'warning'
             }).then(async () => {
                 this.deleteArticleFrom.ids = [row.id]
-                const response = await this.axios.delete('/api/cyzArticle/delete', {data:this.deleteArticleFrom});
+                const response = await this.axios.delete('/cyzArticle/delete', {data:this.deleteArticleFrom});
                 this.$message({
                     message: response.data.message,
                     type: 'success'
@@ -388,7 +395,7 @@ export default {
                 type: 'warning'
             }).then(async () => {
                 this.deleteArticleFrom.ids = this.multipleSelection
-                const response = await this.axios.delete('/api/cyzArticle/delete', {data:this.deleteArticleFrom});
+                const response = await this.axios.delete('/cyzArticle/delete', {data:this.deleteArticleFrom});
                 this.$message({
                     message: response.data.message,
                     type: 'success'
@@ -408,7 +415,7 @@ export default {
             // 假设使用axios发起请求获取数据
 
             try {
-                const response = await this.axios.get('/api/categories/getAllCategoryTree/' + this.categoryType);
+                const response = await this.axios.get('/categories/getAllCategoryTree/' + this.categoryType);
                 this.categoryOptions = response.data.data
             } catch (error) {
                 console.log(error)

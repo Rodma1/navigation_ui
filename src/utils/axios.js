@@ -3,7 +3,7 @@ import axios from 'axios';
 import router from '@/router';
 
 const instance = axios.create({
-    // baseURL: process.env.VUE_APP_BASE_API, // 设置基础 URL
+    baseURL: process.env.VUE_APP_BASE_API, // 设置基础 URL
     timeout: 10000, // 设置请求超时
 });
 // 请求拦截器

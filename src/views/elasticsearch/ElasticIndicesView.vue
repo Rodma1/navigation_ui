@@ -126,7 +126,7 @@ export default {
 
             try {
                 const params = this.getParams("INDEX_LIST")
-                const response = await this.axios.post('/api/elasticsearch/operation', params);
+                const response = await this.axios.post('/elasticsearch/operation', params);
                 this.tableData = response.data.data
                 console.log(this.tableData)
             } catch (error) {
@@ -140,7 +140,7 @@ export default {
             try {
                 const params = this.getParams("CREATE")
                 params.indexName = this.createIndexFrom.indexName
-                const response = await this.axios.post('/api/elasticsearch/operation', params);
+                const response = await this.axios.post('/elasticsearch/operation', params);
                 console.log(response.data)
                 this.$message({
                     message: response.data.message,
@@ -166,7 +166,7 @@ export default {
                 params.indices = this.multipleSelection
                 params.operationCategory = "ALIAS"
                 params.alias = this.associationAliasFrom.alias
-                const response = await this.axios.post('/api/elasticsearch/operation', params);
+                const response = await this.axios.post('/elasticsearch/operation', params);
                 this.$message({
                     message: response.data.message,
                     type: 'success'
@@ -190,7 +190,7 @@ export default {
             }).then(async () => {
                 const params = this.getParams("BATCH_DELETE")
                 params.indices = this.multipleSelection
-                const response = await this.axios.post('/api/elasticsearch/operation', params);
+                const response = await this.axios.post('/elasticsearch/operation', params);
                 console.log(response.data)
                 this.$message({
                     message: response.data.message,
