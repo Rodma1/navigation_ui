@@ -66,7 +66,7 @@ export default {
 
             try {
                 const params = this.getParams("LIST")
-                const response = await this.axios.post('/api/elasticsearch/operation', params);
+                const response = await this.axios.post('/elasticsearch/operation', params);
                 this.tableData = response.data.data
                 console.log(this.tableData)
             } catch (error) {
@@ -81,7 +81,7 @@ export default {
                 const params = this.getParams("WRITE_INDEX")
                 params.indexName = row.index
                 params.alias = row.alias
-                const response = await this.axios.post('/api/elasticsearch/operation', params);
+                const response = await this.axios.post('/elasticsearch/operation', params);
                 this.$message({
                     message: response.data.message,
                     type: 'success'
@@ -103,7 +103,7 @@ export default {
             }).then(async () => {
                 const params = this.getParams("PUT")
                 params.taskId = row.task_id
-                const response = await this.axios.post('/api/elasticsearch/operation', params);
+                const response = await this.axios.post('/elasticsearch/operation', params);
                 this.$message({
                     message: response.data.message,
                     type: 'success'

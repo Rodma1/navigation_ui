@@ -1,97 +1,105 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router';
-import HomeView from '../views/HomeView.vue';
-import IndexView from '../views/IndexView.vue';
-import AboutView from '../views/AboutView.vue';
-import NavMenuView from '../views/NavMenuView.vue';
-import ElasticsearchView from '../views/ElasticsearchView.vue';
-import ArticleView from "@/views/ArticleView.vue";
-import PhrasesView from "@/views/PhrasesView.vue";
-import MemoryView from "@/views/MemoryView.vue";
-import LoginView from "@/views/LoginView.vue";  // 导入登录组件
+import { createRouter, createWebHistory } from 'vue-router'
+import HomeView from '../views/HomeView.vue'
+import IndexView from '../views/IndexView.vue'
+import AboutView from '../views/AboutView.vue'
+import NavMenuView from '../views/NavMenuView.vue'
+import ElasticsearchView from '../views/ElasticsearchView.vue'
+import ArticleView from "@/views/ArticleView.vue"
+import PhrasesView from "@/views/PhrasesView.vue"
+import MemoryView from "@/views/MemoryView.vue"
+import LoginView from "@/views/LoginView.vue"
 import FileUpload from '@/views/FileUpload.vue'
-
-Vue.use(VueRouter);
+import { ElMessage } from 'element-plus'
 
 const routes = [
   {
-    path: '/', // 程序启动默认路由
+    path: '/',
     component: NavMenuView,
-    meta: { title: '整体页面布局' },
-    redirect: '/home', // 重定向到首页
+    redirect: '/home',
     children: [
       {
-        path: '/home',
+        path: 'home',
         name: 'home',
-        component: HomeView
+        component: HomeView,
+        meta: { title: '首页' }
       },
       {
-        path: '/menu',
+        path: 'menu',
         name: 'menu',
-        component: IndexView
+        component: IndexView,
+        meta: { title: '导航' }
       },
       {
-        path: '/about',
+        path: 'about',
         name: 'about',
-        component: AboutView
+        component: AboutView,
+        meta: { title: '关于' }
       },
       {
-        path: '/elasticsearch',
+        path: 'elasticsearch',
         name: 'elasticsearch',
         component: ElasticsearchView,
+        meta: { title: '搜索引擎' }
       },
       {
-        path: '/article',
+        path: 'article',
         name: 'article',
         component: ArticleView,
-        meta: { requiresAuth: true } // 需要登录
-
+        meta: { title: '文章管理', requiresAuth: true }
       },
       {
-        path: '/phrases',
+        path: 'phrases',
         name: 'phrases',
         component: PhrasesView,
-        meta: { requiresAuth: true } // 需要登录
+        meta: { title: '短语管理', requiresAuth: true }
       },
       {
-        path: '/memory',
+        path: 'memory',
         name: 'memory',
         component: MemoryView,
-        meta: { requiresAuth: true } // 需要登录
+        meta: { title: '记忆管理', requiresAuth: true }
       },
       {
-        path: '/file-upload',
+        path: 'file-upload',
         name: 'FileUpload',
         component: FileUpload,
-        meta: {
-          title: '文件上传'
-        }
+        meta: { title: '文件上传' }
+      },
+      {
+        path: '/task/plan',
+        name: 'taskPlan',
+        component: () => import('@/views/task/PlanList.vue'),
+        meta: { title: '任务计划' }
+      },
+      {
+        path: '/task/checkin',
+        name: 'taskCheckIn',
+        component: () => import('@/views/task/CheckInList.vue'),
+        meta: { title: '任务打卡' }
       }
     ]
   },
   {
-    path: '/login', // 登录路由
+    path: '/login',
     name: 'login',
     component: LoginView
   }
-];
+]
 
-const router = new VueRouter({
+const router = createRouter({
+  history: createWebHistory(process.env.BASE_URL),
   routes
-});
+})
 
-// 路由守卫，检查登录状态
+// 路由守卫
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('Authorization'); // 检查Cookie中是否有token
-  console.log("测试" + token)
+  const token = localStorage.getItem('Authorization')
   if (to.matched.some(record => record.meta.requiresAuth) && !token) {
-    // 如果需要登录但没有token，重定向到登录页面
-    next('/login');
+    ElMessage.warning('请先登录')
+    next('/login')
   } else {
-    next(); // 否则继续导航
+    next()
   }
-});
+})
 
-
-
-export default router;
+export default router
