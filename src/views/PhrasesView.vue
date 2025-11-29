@@ -50,7 +50,7 @@
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
                        :page-size="pageSize" :total="total" layout="total, sizes, prev, pager, next, jumper"></el-pagination>
 
-        <el-dialog title="创建句子" :visible.sync="dialogVisible" width="30%">
+        <el-dialog title="创建句子" v-model="dialogVisible" width="30%">
             <el-form ref="form" :model="createPhrasesFrom" label-width="80px">
                 <el-form-item label="句子">
                     <el-input   type="textarea" autosize  v-model="createPhrasesFrom.sentence"></el-input>
@@ -79,7 +79,7 @@
             </span>
         </el-dialog>
 
-        <el-dialog title="创建类别" :visible.sync="categoryVisible" width="30%">
+        <el-dialog title="创建类别" v-model="categoryVisible" width="30%">
             <el-form ref="form" :model="createCategoryFrom" label-width="80px">
                 <el-form-item label="类别名">
                     <el-input v-model="createCategoryFrom.name"></el-input>

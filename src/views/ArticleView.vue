@@ -3,7 +3,7 @@
         <el-button @click="refreshList">查询</el-button>
         <el-button @click="dialogVisible = true;getAllCategories()">创建文章</el-button>
 
-        <el-button @click="categoryVisible = true;getAllCategories()">创建类别</el-button>
+        <el-button plain @click="categoryVisible = true;getAllCategories()">创建类别</el-button>
         <el-button @click="handleBatchDelete()">删除文章</el-button>
 
         <el-input style="width: 200px;margin-left: 10px"  v-model="pageArticleFrom.name" placeholder="查询文章名"></el-input>
@@ -102,7 +102,7 @@
             </span>
         </el-dialog>
 
-        <el-dialog title="创建类别" :visible.sync="categoryVisible" width="30%">
+        <el-dialog title="创建类别" v-model="categoryVisible" width="30%">
             <el-form ref="form" :model="createCategoryFrom" label-width="80px">
                 <el-form-item label="类别名称">
                     <el-input v-model="createCategoryFrom.name"></el-input>
@@ -124,14 +124,17 @@
                 </el-form-item>
                 <!-- 其他表单项 -->
             </el-form>
-            <span slot="footer" class="dialog-footer">
+          <template #footer>
+            <div class="dialog-footer">
                 <el-button @click="categoryVisible = false">取 消</el-button>
                 <el-button type="primary" @click="createArticleCategory" :loading="false">确 定</el-button>
-            </span>
+            </div>
+          </template>
         </el-dialog>
 
 
-        <el-dialog title="编辑文章" :visible.sync="updateArticleVisible" width="30%">
+        <el-dialog title="编辑文章" :model-value="updateArticleVisible"
+                   @update:model-value = "updateArticleVisible = $event" width="30%">
             <el-form ref="form" :model="updateArticleFrom" label-width="80px">
                 <el-form-item label="文章名称">
                     <el-input v-model="updateArticleFrom.name"></el-input>
@@ -157,13 +160,15 @@
                 </el-form-item>
                 <!-- 其他表单项 -->
             </el-form>
-            <span slot="footer" class="dialog-footer">
+            <template #footer>
                 <el-button @click="updateArticleVisible = false">取 消</el-button>
                 <el-button type="primary" @click="handleEdit" :loading="false">确 定</el-button>
-            </span>
+            </template>
         </el-dialog>
-
     </div>
+
+
+
 </template>
 
 <script>
@@ -186,7 +191,7 @@ export default {
 
             categoryType: "ARTICLE",
             dialogVisible: false,
-            categoryVisible: false,
+            categoryVisible:  false,
             updateArticleVisible: false,
             createArticleFrom: {
                 name: '',
