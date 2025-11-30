@@ -12,12 +12,12 @@
     <div class="date-picker-container">
       <el-date-picker
         v-model="dateRange"
-        type="daterange"
+        type="datetimerange"
         range-separator="至"
         start-placeholder="开始日期"
         end-placeholder="结束日期"
         :shortcuts="dateShortcuts"
-        value-format="YYYY-MM-DD"
+        value-format="YYYY-MM-DD HH:mm:ss"
         @change="handleDateRangeChange"
       />
     </div>
@@ -56,13 +56,13 @@
             </div>
           </div>
           <div class="checkin-item-content">
-            <p class="checkin-item-desc">{{ checkin.checkInDesc }}</p>
+            <p class="checkin-item-desc">{{ checkin.checkNote }}</p>
             <div class="checkin-item-info">
-              <el-tag :type="checkin.checkInStatus === '1' ? 'success' : 'warning'" size="small">
-                {{ checkin.checkInStatus === '1' ? '已完成' : '未完成' }}
+              <el-tag :type="checkin.checkStatus === '1' ? 'success' : 'warning'" size="small">
+                {{ checkin.checkStatus === '1' ? '已完成' : '未完成' }}
               </el-tag>
               <span class="checkin-item-time">
-                打卡时间：{{ formatDateTime(checkin.checkInTime) }}
+                打卡时间：{{ formatDateTime(checkin.checkDate) }}
               </span>
             </div>
           </div>
@@ -96,9 +96,9 @@
         label-width="80px"
         class="checkin-dialog-form"
       >
-        <el-form-item label="任务计划" prop="taskPlanId">
+        <el-form-item label="任务计划" prop="taskId">
           <el-select
-            v-model="checkinForm.taskPlanId"
+            v-model="checkinForm.taskId"
             placeholder="请选择任务计划"
             style="width: 100%"
             @change="handleTaskPlanChange"
@@ -111,32 +111,23 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="打卡日期" prop="checkInDate">
+        <el-form-item label="打卡日期" prop="checkDate">
           <el-date-picker
-            v-model="checkinForm.checkInDate"
-            type="date"
+            v-model="checkinForm.checkDate"
+            type="datetime"
             placeholder="请选择打卡日期"
             style="width: 100%"
-            value-format="YYYY-MM-DD"
           />
         </el-form-item>
-        <el-form-item label="打卡时间" prop="checkInTime">
-          <el-time-picker
-            v-model="checkinForm.checkInTime"
-            placeholder="请选择打卡时间"
-            style="width: 100%"
-            value-format="HH:mm:ss"
-          />
-        </el-form-item>
-        <el-form-item label="打卡状态" prop="checkInStatus">
-          <el-select v-model="checkinForm.checkInStatus" placeholder="请选择打卡状态" style="width: 100%">
+        <el-form-item label="打卡状态" prop="checkStatus">
+          <el-select v-model="checkinForm.checkStatus" placeholder="请选择打卡状态" style="width: 100%">
             <el-option label="未完成" value="0" />
             <el-option label="已完成" value="1" />
           </el-select>
         </el-form-item>
-        <el-form-item label="打卡描述" prop="checkInDesc">
+        <el-form-item label="打卡描述" prop="checkNote">
           <el-input
-            v-model="checkinForm.checkInDesc"
+            v-model="checkinForm.checkNote"
             type="textarea"
             :rows="3"
             placeholder="请输入打卡描述"
@@ -158,20 +149,21 @@ import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import {
-    createTaskCheckIn,
-    updateTaskCheckIn,
-    deleteTaskCheckIn,
-    getTaskCheckInStatistics,
-    getTaskPlanPage
+  createTaskCheckIn,
+  updateTaskCheckIn,
+  deleteTaskCheckIn,
+  getTaskCheckInStatistics,
+  getTaskCheckInPage, getTaskPlanList
 } from '@/api/task'
-import { getTaskPlanList } from '@/api/task'
 
 export default {
   name: 'CheckInList',
   components: {
     Plus
   },
+
   setup() {
+
     // 日期范围
     const dateRange = ref([])
     const dateShortcuts = [
@@ -230,26 +222,24 @@ export default {
     const checkinFormRef = ref(null)
     const checkinForm = reactive({
       id: null,
-      taskPlanId: null,
+      taskId: null,
       taskPlanName: '',
-      checkInDate: '',
-      checkInTime: '',
-      checkInStatus: '0',
-      checkInDesc: ''
+      checkDate: '',
+      checkStatus: '0',
+      checkNote: ''
     })
+    
 
     // 表单校验规则
     const checkinRules = {
-      taskPlanId: [
+      taskId: [
         { required: true, message: '请选择任务计划', trigger: 'change' }
       ],
-      checkInDate: [
+      checkDate: [
         { required: true, message: '请选择打卡日期', trigger: 'change' }
       ],
-      checkInTime: [
-        { required: true, message: '请选择打卡时间', trigger: 'change' }
-      ],
-      checkInStatus: [
+
+      checkStatus: [
         { required: true, message: '请选择打卡状态', trigger: 'change' }
       ]
     }
@@ -257,7 +247,7 @@ export default {
     // 获取打卡记录列表
     const getCheckinList = async () => {
       try {
-        const res = await getTaskPlanPage({
+        const res = await getTaskCheckInPage({
           current: page.current,
           size: page.size,
           userId: 1, // TODO: 从用户信息中获取
@@ -283,8 +273,8 @@ export default {
           userId: 1, // TODO: 从用户信息中获取
           taskType: null
         })
-        if (res.code === 200) {
-          taskPlanList.value = res.data
+        if (res.data.code === 200) {
+          taskPlanList.value = res.data.data
         } else {
           ElMessage.error(res.message || '获取任务计划列表失败')
         }
@@ -302,8 +292,9 @@ export default {
           startTime: dateRange.value?.[0],
           endTime: dateRange.value?.[1]
         })
-        if (res.code === 200) {
-          const stats = res.data
+        console.info('打卡统计:', res)
+        if (res.data.code === 200) {
+          const stats = res.data.data
           let totalCount = 0
           let completedCount = 0
           
@@ -350,12 +341,11 @@ export default {
       dialogType.value = 'add'
       Object.assign(checkinForm, {
         id: null,
-        taskPlanId: null,
+        taskId: null,
         taskPlanName: '',
-        checkInDate: new Date().toISOString().split('T')[0],
-        checkInTime: new Date().toTimeString().split(' ')[0],
-        checkInStatus: '0',
-        checkInDesc: ''
+        checkDate: new Date().toISOString().split('T')[0],
+        checkStatus: '0',
+        checkNote: ''
       })
       dialogVisible.value = true
     }
@@ -395,8 +385,8 @@ export default {
     }
 
     // 任务计划改变
-    const handleTaskPlanChange = (taskPlanId) => {
-      const taskPlan = taskPlanList.value.find(task => task.id === taskPlanId)
+    const handleTaskPlanChange = (taskId) => {
+      const taskPlan = taskPlanList.value.find(task => task.id === taskId)
       if (taskPlan) {
         checkinForm.taskPlanName = taskPlan.taskName
       }
@@ -412,13 +402,13 @@ export default {
             const api = dialogType.value === 'add' ? createTaskCheckIn : updateTaskCheckIn
             const res = await api(checkinForm)
             
-            if (res.code === 200) {
+            if (res.data.code === 200) {
               ElMessage.success(dialogType.value === 'add' ? '新增成功' : '更新成功')
               dialogVisible.value = false
               await getCheckinList()
               await getStatistics()
             } else {
-              ElMessage.error(res.message || (dialogType.value === 'add' ? '新增失败' : '更新失败'))
+              ElMessage.error(res.data.message || (dialogType.value === 'add' ? '新增失败' : '更新失败'))
             }
           } catch (error) {
             console.error(dialogType.value === 'add' ? '新增打卡记录失败:' : '更新打卡记录失败:', error)
@@ -433,9 +423,24 @@ export default {
       if (!datetime) return ''
       return datetime.replace('T', ' ').split('.')[0]
     }
+    const initDateRange = () => {
+      const start = new Date()
+      start.setHours(0, 0, 0, 0)
+
+      const end = new Date()
+      end.setHours(23, 59, 59, 999)
+
+      dateRange.value = [
+        start.toISOString().slice(0, 19).replace('T', ' '),
+        end.toISOString().slice(0, 19).replace('T', ' ')
+      ]
+    }
+
+
 
     // 页面加载时获取数据
     onMounted(() => {
+      initDateRange()
       getCheckinList()
       getPlanList()
       getStatistics()
@@ -465,6 +470,7 @@ export default {
     }
   }
 }
+
 </script>
 
 <style scoped>

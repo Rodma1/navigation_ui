@@ -25,6 +25,12 @@ export function deleteTaskPlan(id) {
   return axios.delete(`/task/plan/${id}`)
 }
 
+// 获取任务计划分页列表
+export function getTaskCheckInPage(params) {
+  return axios.get('/task/checkin/page', { params })
+}
+
+
 // 获取打卡记录列表
 export function getTaskCheckInList(params) {
   return axios.get('/task/checkin/list', { params })
