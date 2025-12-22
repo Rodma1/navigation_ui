@@ -33,35 +33,24 @@
                 prop="categoryName"
                 label="类别名称">
             </el-table-column>
-            <el-table-column
-                align="right" label="推荐等级">
-                <template slot-scope="scope">
-                    <el-rate
-                        v-model="scope.row.rank"
-                        :colors="colors">
+          <el-table-column align="right" label="推荐等级">
+            <template #default="{ row }">
+              <el-rate v-model="row.rank" :colors="colors" />
+            </template>
+          </el-table-column>
 
-                    </el-rate>
-                </template>
-            </el-table-column>
+          <el-table-column align="right">
+            <template #default="{ row }">
+              <el-button size="mini" @click="openEditDialog(row)">编辑句子</el-button>
+              <el-button size="mini" type="danger" @click="handleDelete(row)">删除句子</el-button>
+            </template>
+          </el-table-column>
 
-
-            <el-table-column
-                    align="right">
-                <template slot-scope="scope">
-                    <el-button
-                            size="mini"
-                            @click="updatePhrasesFrom=scope.row;updatePhrasesVisible = true;getAllCategories()">编辑句子</el-button>
-                    <el-button
-                            size="mini"
-                            type="danger"
-                            @click="handleDelete(scope.row)">删除句子</el-button>
-                </template>
-            </el-table-column>
         </el-table>
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
                        :page-size="pageSize" :total="total" layout="total, sizes, prev, pager, next, jumper"></el-pagination>
 
-        <el-dialog title="创建句子" :visible.sync="dialogVisible" width="30%">
+        <el-dialog title="创建句子" v-model="dialogVisible" width="30%">
             <el-form ref="form" :model="createPhrasesFrom" label-width="80px">
                 <el-form-item label="句子">
                     <el-input   type="textarea" autosize  v-model="createPhrasesFrom.sentence"></el-input>
@@ -90,7 +79,7 @@
             </span>
         </el-dialog>
 
-        <el-dialog title="创建类别" :visible.sync="categoryVisible" width="30%">
+        <el-dialog title="创建类别" v-model="categoryVisible" width="30%">
             <el-form ref="form" :model="createCategoryFrom" label-width="80px">
                 <el-form-item label="类别名">
                     <el-input v-model="createCategoryFrom.name"></el-input>
@@ -119,34 +108,37 @@
         </el-dialog>
 
 
-        <el-dialog title="编辑句子" :visible.sync="updatePhrasesVisible" width="30%">
-            <el-form ref="form" :model="updatePhrasesFrom" label-width="80px">
-                <el-form-item label="句子">
-                    <el-input   type="textarea" autosize v-model="updatePhrasesFrom.sentence"></el-input>
-                </el-form-item>
-                <el-form-item label="句子类别">
-                    <el-cascader
-                            v-model="updatePhrasesFrom.categoryIds"
-                            :options="categoryOptions"
-                            :show-all-levels="false"
-                            :props="{emitPath:false, multiple :true, checkStrictly: true,value: 'id',label:'name' }"
-                            clearable>
-                    </el-cascader>
+      <el-dialog
+          title="编辑句子"
+          :model-value="updatePhrasesVisible"
+          @update:model-value="updatePhrasesVisible = $event"
+          width="30%">
+        <el-form ref="updateForm" :model="updatePhrasesFrom" label-width="80px">
+          <el-form-item label="句子">
+            <el-input type="textarea" autosize v-model="updatePhrasesFrom.sentence"></el-input>
+          </el-form-item>
 
-                    <el-form-item label="推荐等级">
-                        <el-rate
-                            v-model="updatePhrasesFrom.rank"
-                            :colors="colors">
-                        </el-rate>
-                    </el-form-item>
-                </el-form-item>
-                <!-- 其他表单项 -->
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="updatePhrasesVisible = false">取 消</el-button>
-                <el-button type="primary" @click="handleEdit" :loading="false">确 定</el-button>
-            </span>
-        </el-dialog>
+          <el-form-item label="句子类别">
+            <el-cascader
+                v-model="updatePhrasesFrom.categoryIds"
+                :options="categoryOptions"
+                :show-all-levels="false"
+                :props="{ emitPath:false, multiple:true, checkStrictly:true, value:'id', label:'name' }"
+                clearable>
+            </el-cascader>
+          </el-form-item>
+
+          <el-form-item label="推荐等级">
+            <el-rate v-model="updatePhrasesFrom.rank" :colors="colors"></el-rate>
+          </el-form-item>
+        </el-form>
+
+        <template #footer>
+          <el-button @click="updatePhrasesVisible = false">取 消</el-button>
+          <el-button type="primary" @click="handleEdit" :loading="false">确 定</el-button>
+        </template>
+      </el-dialog>
+
 
     </div>
 </template>
@@ -223,7 +215,7 @@ export default {
                     sentence: this.pagePhrasesFrom.sentence,
                     categoryId: this.pagePhrasesFrom.categoryId
                 };
-                const response = await this.axios.get('/api/phrases/pages',{params});
+                const response = await this.axios.get('/phrases/pages',{params});
                 this.tableData = response.data.data.rows
 
                 this.total = response.data.data.total
@@ -244,13 +236,24 @@ export default {
             this.currentPage = page;
             this.getPage()
         },
+      async openEditDialog(row) {
+          console.log("test")
+          console.log(row)
+
+        this.updatePhrasesFrom = JSON.parse(JSON.stringify(row));  // 深拷贝
+        console.log(this.updatePhrasesFrom)
+        this.updatePhrasesVisible = true;
+
+        // 异步获取类别
+        await this.getAllCategories();
+      },
         /**
          * 创建句子
          * @returns {Promise<void>}
          */
         async createPhrases() {
             try {
-                const response = await this.axios.post('/api/phrases/insert', this.createPhrasesFrom);
+                const response = await this.axios.post('/phrases/insert', this.createPhrasesFrom);
                 console.log(response.data)
                 this.$message({
                     message: response.data.message,
@@ -273,7 +276,7 @@ export default {
         async createPhrasesCategory() {
             try {
                 this.createCategoryFrom.categoryType = this.categoryType
-                const response = await this.axios.post('/api/categories/insert', this.createCategoryFrom);
+                const response = await this.axios.post('/categories/insert', this.createCategoryFrom);
                 this.$message({
                     message: response.data.message,
                     type: 'success'
@@ -294,13 +297,19 @@ export default {
          */
         async handleEdit() {
             try {
-                const response = await this.axios.put('/api/phrases/update', this.updatePhrasesFrom);
+                const response = await this.axios.put('/phrases/update', this.updatePhrasesFrom);
                 this.$message({
                     message: response.data.message,
                     type: 'success'
                 });
                 this.refreshList()
-                this.updatePhrasesFrom = {}
+              // 重置为初始化结构
+              this.updatePhrasesFrom = {
+                id: null,
+                sentence: '',
+                categoryIds: [],
+                rank: null
+              };
             } catch (error) {
                 console.log(error)
             }
@@ -320,7 +329,7 @@ export default {
                 type: 'warning'
             }).then(async () => {
                 this.deletePhrasesFrom.ids = [row.id]
-                const response = await this.axios.delete('/api/phrases/delete', {data:this.deletePhrasesFrom});
+                const response = await this.axios.delete('/phrases/delete', {data:this.deletePhrasesFrom});
                 this.$message({
                     message: response.data.message,
                     type: 'success'
@@ -343,7 +352,7 @@ export default {
                 type: 'warning'
             }).then(async () => {
                 this.deletePhrasesFrom.ids = this.multipleSelection
-                const response = await this.axios.delete('/api/phrases/delete', {data:this.deletePhrasesFrom});
+                const response = await this.axios.delete('/phrases/delete', {data:this.deletePhrasesFrom});
                 this.$message({
                     message: response.data.message,
                     type: 'success'
@@ -363,7 +372,7 @@ export default {
             // 假设使用axios发起请求获取数据
 
             try {
-                const response = await this.axios.get('/api/categories/getAllCategoryTree/' + this.categoryType);
+                const response = await this.axios.get('/categories/getAllCategoryTree/' + this.categoryType);
                 this.categoryOptions = response.data.data
             } catch (error) {
                 console.log(error)

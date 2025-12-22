@@ -1,11 +1,11 @@
 // src/utils/axios.js
 import axios from 'axios';
+import router from '@/router';
 
 const instance = axios.create({
-    // baseURL: process.env.VUE_APP_BASE_API, // 设置基础 URL
+    baseURL: process.env.VUE_APP_BASE_API, // 设置基础 URL
     timeout: 10000, // 设置请求超时
 });
-
 // 请求拦截器
 instance.interceptors.request.use(config => {
     const token = localStorage.getItem('Authorization'); // 从本地存储中获取 token
@@ -23,7 +23,10 @@ instance.interceptors.response.use(response => {
     if (response.data && (response.data.code === 11012 || response.data.code === 11013)) {
         // 删除浏览器中的 token
         localStorage.removeItem('Authorization');
-        // 这里可以选择跳转到登录页面或显示错误信息
+        // 检查当前路由是否已经是登录页，避免冗余导航
+        if (router.currentRoute.path !== '/login') {
+            router.push('/login').catch();
+        }
         console.log('Token验证失败，已删除存储的token');
 
     }

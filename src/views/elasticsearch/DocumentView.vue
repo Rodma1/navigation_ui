@@ -175,7 +175,7 @@ export default {
                 params.sortOrder = this.sortOrder;
                 params.indices = names
                 params.searchFields = this.searchFields;
-                const response = await this.axios.post('/api/elasticsearch/operation', params);
+                const response = await this.axios.post('/elasticsearch/operation', params);
                 this.jsonData = response.data.data.rows;
                 this.searchCount = response.data.data.count
             } catch (error) {
@@ -204,7 +204,7 @@ export default {
                     const params = this.getParams("INSERT")
                     params.document = JSON.stringify(parsedJson);
                     params.indexName = this.selectIndex
-                    const response = await this.axios.post('/api/elasticsearch/operation', params);
+                    const response = await this.axios.post('/elasticsearch/operation', params);
                     this.refreshList()
                     this.$message({
                         message: response.data.message,
@@ -233,7 +233,7 @@ export default {
         async getindexNames() {
             const params = this.getParams("INDEX_LIST")
             params.operationCategory = "INDEX"
-            const response = await this.axios.post('/api/elasticsearch/operation', params);
+            const response = await this.axios.post('/elasticsearch/operation', params);
             const values = response.data.data
             const indexNames = []
             values.forEach(item => {
@@ -256,7 +256,7 @@ export default {
                 const params = this.getParams("DELETE")
                 params.documentIds = this.selectedItems
                 params.indices = this.indexNames
-                const response = await this.axios.post('/api/elasticsearch/operation', params);
+                const response = await this.axios.post('/elasticsearch/operation', params);
                 this.selectedItems = [];
                 this.refreshList()
                 this.$message({
@@ -273,7 +273,7 @@ export default {
         // 获取总数
         async getDocumentCount() {
             const params = this.getParams("COUNT")
-            const response = await this.axios.post('/api/elasticsearch/operation', params);
+            const response = await this.axios.post('/elasticsearch/operation', params);
             this.count = response.data.data
         },
         copyJson(item) {

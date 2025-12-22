@@ -38,7 +38,7 @@ export default {
             form.principal = this.loginForm.principal
             form.credential = sm2.doEncrypt(this.loginForm.credential, this.publicKey, cipherMode) // sm2加密
             // 模拟登录逻辑，可以调用后端API
-            this.axios.post('/api/user/doLogin', form)
+            this.axios.post('/user/doLogin', form)
                 .then(response => {
                     const code = response.data.code;
                     if (code !== 200) {

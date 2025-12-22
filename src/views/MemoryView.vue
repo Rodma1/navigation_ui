@@ -21,7 +21,7 @@
 
             <el-table-column
                 align="right">
-                <template slot-scope="scope">
+                <template #default="scope">
                     <el-button
                         size="mini"
                         @click="updateMemoryFrom=scope.row;updateMemoryVisible = true">编辑备忘录</el-button>
@@ -35,7 +35,7 @@
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
                    :page-size="pageSize" :total="total" layout="total, sizes, prev, pager, next, jumper"></el-pagination>
 
-        <el-dialog title="创建备忘录" :visible.sync="dialogVisible" width="30%">
+        <el-dialog title="创建备忘录" v-model="dialogVisible" width="30%">
             <el-form ref="form" :model="createMemoryFrom" label-width="80px">
                 <el-form-item label="内容" >
                     <el-input   type="textarea"
@@ -50,16 +50,19 @@
         </el-dialog>
 
 
-        <el-dialog title="编辑备忘录" :visible.sync="updateMemoryVisible" width="30%">
+        <el-dialog title="编辑备忘录" v-model="updateMemoryVisible" width="30%">
             <el-form ref="form" :model="updateMemoryFrom" label-width="80px">
                 <el-form-item label="内容">
                     <el-input  type="textarea" autosize v-model="updateMemoryFrom.content"></el-input>
                 </el-form-item>
             </el-form>
-            <span slot="footer" class="dialog-footer">
+          <template #footer>
+            <div  class="dialog-footer">
                 <el-button @click="updateMemoryVisible = false">取 消</el-button>
                 <el-button type="primary" @click="handleEdit" :loading="false">确 定</el-button>
-            </span>
+            </div>
+          </template>
+
         </el-dialog>
 
     </div>
@@ -126,7 +129,7 @@ export default {
                     content: this.pageMemoryFrom.content,
                     categoryId: this.pageMemoryFrom.categoryId
                 };
-                const response = await this.axios.get('/api/memory/pages',{params});
+                const response = await this.axios.get('/memory/pages',{params});
                 this.tableData = response.data.data.rows
 
                 this.total = response.data.data.total
@@ -152,7 +155,7 @@ export default {
          */
         async createMemory() {
             try {
-                const response = await this.axios.post('/api/memory/insert', this.createMemoryFrom);
+                const response = await this.axios.post('/memory/insert', this.createMemoryFrom);
                 console.log(response.data)
                 this.$message({
                     message: response.data.message,
@@ -175,7 +178,7 @@ export default {
          */
         async handleEdit() {
             try {
-                const response = await this.axios.put('/api/memory/update', this.updateMemoryFrom);
+                const response = await this.axios.put('/memory/update', this.updateMemoryFrom);
                 this.$message({
                     message: response.data.message,
                     type: 'success'
@@ -201,7 +204,7 @@ export default {
                 type: 'warning'
             }).then(async () => {
                 this.deleteMemoryFrom.ids = [row.id]
-                const response = await this.axios.delete('/api/memory/delete', {data:this.deleteMemoryFrom});
+                const response = await this.axios.delete('/memory/delete', {data:this.deleteMemoryFrom});
                 this.$message({
                     message: response.data.message,
                     type: 'success'
@@ -224,7 +227,7 @@ export default {
                 type: 'warning'
             }).then(async () => {
                 this.deleteMemoryFrom.ids = this.multipleSelection
-                const response = await this.axios.delete('/api/memory/delete', {data:this.deleteMemoryFrom});
+                const response = await this.axios.delete('/memory/delete', {data:this.deleteMemoryFrom});
                 this.$message({
                     message: response.data.message,
                     type: 'success'

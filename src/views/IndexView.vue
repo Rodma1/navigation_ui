@@ -67,7 +67,7 @@ export default {
   methods: {
     async fetchCategories() {
       try {
-        const response = await this.axios.get('/api/cyzNavigateCategory/tree');
+        const response = await this.axios.get('/cyzNavigateCategory/tree');
         this.categories = response.data.data;
         console.log(this.categories)
       } catch (error) {
