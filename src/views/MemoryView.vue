@@ -1,10 +1,15 @@
 <template>
     <div>
-        <el-button @click="refreshList">查询</el-button>
-        <el-button @click="dialogVisible = true;">创建备忘录</el-button>
-        <el-button @click="handleBatchDelete()">删除备忘录</el-button>
-
-        <el-input style="width: 200px;margin-left: 10px"  v-model="pageMemoryFrom.content" placeholder="查询备忘录名"></el-input>
+        <div class="toolbar">
+          <div class="toolbar-actions">
+            <el-button @click="refreshList">查询</el-button>
+            <el-button @click="dialogVisible = true;">创建备忘录</el-button>
+            <el-button @click="handleBatchDelete()">删除备忘录</el-button>
+          </div>
+          <div class="toolbar-filters">
+            <el-input class="toolbar-input" v-model="pageMemoryFrom.content" placeholder="查询备忘录名"></el-input>
+          </div>
+        </div>
         <el-table
         :data="tableData"
         style="width: 100%" ref="multipleTable" @selection-change="handleSelectionChange">
@@ -246,3 +251,35 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.toolbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.toolbar-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.toolbar-input {
+  width: 200px;
+}
+
+@media (max-width: 768px) {
+  .toolbar-input {
+    width: 100%;
+  }
+}
+</style>

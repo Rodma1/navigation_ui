@@ -1,0 +1,129 @@
+// ========================================
+// Design Tokens — SCSS variables + CSS custom properties
+// ========================================
+
+// --- Colors (SCSS compile-time) ---
+$color-primary: #4F6EF7;
+$color-primary-light: #7B93FA;
+$color-primary-bg: #EEF1FE;
+$color-secondary: #10B981;
+$color-accent: #F59E0B;
+$color-bg-body: #F5F7FA;
+$color-bg-surface: #FFFFFF;
+$color-bg-elevated: #FFFFFF;
+$color-text-primary: #1E293B;
+$color-text-secondary: #64748B;
+$color-text-muted: #94A3B8;
+$color-border: #E2E8F0;
+$color-border-light: #F1F5F9;
+
+// --- Typography ---
+$font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+
+// --- Shadows ---
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+$shadow-hover: 0 12px 24px -4px rgba(79, 110, 247, 0.15), 0 4px 8px -2px rgba(0, 0, 0, 0.06);
+
+// --- Border Radius ---
+$radius-sm: 6px;
+$radius-md: 10px;
+$radius-lg: 16px;
+$radius-xl: 24px;
+$radius-full: 9999px;
+
+// --- Transitions ---
+$transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+$transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+$transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+$transition-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+// ========================================
+// CSS Custom Properties (runtime theming)
+// ========================================
+:root {
+  // Colors
+  --color-primary: #{$color-primary};
+  --color-primary-light: #{$color-primary-light};
+  --color-primary-bg: #{$color-primary-bg};
+  --color-secondary: #{$color-secondary};
+  --color-accent: #{$color-accent};
+  --color-bg-body: #{$color-bg-body};
+  --color-bg-surface: #{$color-bg-surface};
+  --color-bg-elevated: #{$color-bg-elevated};
+  --color-text-primary: #{$color-text-primary};
+  --color-text-secondary: #{$color-text-secondary};
+  --color-text-muted: #{$color-text-muted};
+  --color-border: #{$color-border};
+  --color-border-light: #{$color-border-light};
+
+  // Typography
+  --font-family: #{$font-family};
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 24px;
+  --font-size-2xl: 32px;
+  --font-size-3xl: 40px;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  // Spacing
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  // Shadows
+  --shadow-sm: #{$shadow-sm};
+  --shadow-md: #{$shadow-md};
+  --shadow-lg: #{$shadow-lg};
+  --shadow-xl: #{$shadow-xl};
+  --shadow-hover: #{$shadow-hover};
+
+  // Border Radius
+  --radius-sm: #{$radius-sm};
+  --radius-md: #{$radius-md};
+  --radius-lg: #{$radius-lg};
+  --radius-xl: #{$radius-xl};
+  --radius-full: #{$radius-full};
+
+  // Transitions
+  --transition-fast: #{$transition-fast};
+  --transition-base: #{$transition-base};
+  --transition-slow: #{$transition-slow};
+  --transition-spring: #{$transition-spring};
+}
+
+// ========================================
+// Dark Mode
+// ========================================
+:root[data-theme="dark"] {
+  --color-primary: #7B93FA;
+  --color-primary-light: #9BB0FC;
+  --color-primary-bg: #1E2A4A;
+  --color-bg-body: #0F172A;
+  --color-bg-surface: #1E293B;
+  --color-bg-elevated: #334155;
+  --color-text-primary: #F1F5F9;
+  --color-text-secondary: #94A3B8;
+  --color-text-muted: #64748B;
+  --color-border: #475569;
+  --color-border-light: #334155;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+  --shadow-hover: 0 12px 24px -4px rgba(123, 147, 250, 0.2), 0 4px 8px -2px rgba(0, 0, 0, 0.3);
+}

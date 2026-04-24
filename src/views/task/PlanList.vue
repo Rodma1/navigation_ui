@@ -392,4 +392,30 @@ export default {
 .plan-dialog-form .el-form-item {
   margin-bottom: 20px;
 }
+
+@media (max-width: 768px) {
+  .plan-container {
+    padding: 12px;
+  }
+
+  .plan-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .plan-item-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .pagination-container {
+    text-align: center;
+  }
+
+  .plan-dialog-form {
+    padding: 10px;
+  }
+}
 </style> 
