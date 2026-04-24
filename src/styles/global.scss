@@ -1,0 +1,116 @@
+// ========================================
+// Global Styles
+// ========================================
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-bg-body);
+  color: var(--color-text-primary);
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color var(--transition-base), color var(--transition-base);
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+::selection {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+// Scrollbar
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+  &:hover {
+    background: var(--color-text-muted);
+  }
+}
+
+// Focus visible
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+// Reduced motion
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+// ========================================
+// Page Transition
+// ========================================
+.page-fade-enter-active,
+.page-fade-leave-active {
+  transition: opacity var(--transition-base), transform var(--transition-base);
+}
+
+.page-fade-enter-from {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.page-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+// ========================================
+// Mobile Global Overrides
+// ========================================
+@media (max-width: 768px) {
+  // 表格横向滚动
+  .el-table {
+    overflow-x: auto;
+  }
+
+  // 对话框移动端全宽
+  .el-dialog {
+    --el-dialog-width: 92% !important;
+    margin: 16px auto !important;
+  }
+
+  // 级联选择器移动端满宽
+  .el-cascader {
+    width: 100% !important;
+  }
+
+  // 日期范围选择器移动端
+  .el-date-editor--datetimerange {
+    width: 100% !important;
+    flex-wrap: wrap;
+  }
+}

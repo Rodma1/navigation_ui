@@ -583,4 +583,34 @@ export default {
 .checkin-dialog-form .el-form-item {
   margin-bottom: 20px;
 }
+
+@media (max-width: 768px) {
+  .checkin-container {
+    padding: 12px;
+  }
+
+  .checkin-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .checkin-stats-item {
+    min-width: 120px;
+  }
+
+  .checkin-item-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .pagination-container {
+    text-align: center;
+  }
+
+  .checkin-dialog-form {
+    padding: 10px;
+  }
+}
 </style> 

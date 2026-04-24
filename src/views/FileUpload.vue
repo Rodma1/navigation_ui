@@ -5,7 +5,7 @@
         <span>文件上传</span>
       </div>
       <div class="upload-section">
-        <el-select v-model="selectedBucket" placeholder="请选择存储桶" style="margin-bottom: 20px; width: 200px;">
+        <el-select v-model="selectedBucket" placeholder="请选择存储桶" class="bucket-select">
           <el-option
             v-for="bucket in buckets"
             :key="bucket"
@@ -34,8 +34,8 @@
         <span>图片展示</span>
       </div>
       <div class="image-list">
-        <el-row :gutter="20">
-          <el-col :span="6" v-for="(item, index) in imageList" :key="index">
+        <el-row :gutter="20" class="image-grid">
+          <el-col :xs="12" :sm="8" :md="6" v-for="(item, index) in imageList" :key="index">
             <el-card :body-style="{ padding: '0px' }" class="image-card">
               <img :src="item.url" class="image">
               <div style="padding: 14px;">
@@ -146,6 +146,11 @@ export default {
   padding: 20px;
 }
 
+.bucket-select {
+  margin-bottom: 20px;
+  width: 200px;
+}
+
 .upload-section {
   margin-bottom: 20px;
 }
@@ -173,5 +178,15 @@ export default {
 
 .clearfix:after {
   clear: both;
+}
+
+@media (max-width: 768px) {
+  .bucket-select {
+    width: 100%;
+  }
+
+  .image {
+    height: 150px;
+  }
 }
 </style>

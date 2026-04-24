@@ -1,0 +1,103 @@
+// ========================================
+// Element Plus Overrides
+// ========================================
+
+:root {
+  --el-color-primary: var(--color-primary);
+  --el-color-primary-light-3: var(--color-primary-light);
+  --el-color-primary-light-9: var(--color-primary-bg);
+  --el-border-radius-base: var(--radius-sm);
+  --el-font-family: var(--font-family);
+  --el-bg-color: var(--color-bg-surface);
+  --el-bg-color-page: var(--color-bg-body);
+  --el-text-color-primary: var(--color-text-primary);
+  --el-text-color-regular: var(--color-text-secondary);
+  --el-border-color: var(--color-border);
+  --el-fill-color-light: var(--color-bg-body);
+}
+
+// ========================================
+// Dark Mode Element Plus Overrides
+// ========================================
+:root[data-theme="dark"] {
+  --el-bg-color: var(--color-bg-surface);
+  --el-bg-color-overlay: var(--color-bg-elevated);
+  --el-bg-color-page: var(--color-bg-body);
+  --el-text-color-primary: var(--color-text-primary);
+  --el-text-color-regular: var(--color-text-secondary);
+  --el-text-color-secondary: var(--color-text-muted);
+  --el-border-color: var(--color-border);
+  --el-border-color-light: var(--color-border-light);
+  --el-fill-color-blank: var(--color-bg-surface);
+  --el-fill-color-light: var(--color-bg-elevated);
+
+  // 对话框深色
+  .el-dialog {
+    --el-dialog-bg-color: var(--color-bg-surface);
+    --el-dialog-title-font-size: var(--font-size-lg);
+    border: 1px solid var(--color-border);
+  }
+
+  // 表格深色
+  .el-table {
+    --el-table-bg-color: var(--color-bg-surface);
+    --el-table-tr-bg-color: var(--color-bg-surface);
+    --el-table-header-bg-color: var(--color-bg-elevated);
+    --el-table-row-hover-bg-color: var(--color-primary-bg);
+    --el-table-border-color: var(--color-border-light);
+  }
+
+  // 卡片深色
+  .el-card {
+    --el-card-bg-color: var(--color-bg-surface);
+    border-color: var(--color-border-light);
+  }
+
+  // 输入框深色
+  .el-input__wrapper {
+    background-color: var(--color-bg-elevated);
+    box-shadow: 0 0 0 1px var(--color-border) inset;
+  }
+
+  .el-input__wrapper:hover {
+    box-shadow: 0 0 0 1px var(--color-border) inset;
+  }
+
+  .el-input__wrapper.is-focus {
+    box-shadow: 0 0 0 1px var(--color-primary) inset;
+  }
+
+  // 抽屉深色
+  .el-drawer {
+    background-color: var(--color-bg-surface);
+  }
+
+  // 树组件深色
+  .el-tree {
+    --el-tree-node-hover-bg-color: var(--color-primary-bg);
+    background-color: transparent;
+  }
+
+  // 分页深色
+  .el-pagination {
+    --el-pagination-bg-color: var(--color-bg-surface);
+    --el-pagination-button-bg-color: var(--color-bg-elevated);
+    --el-pagination-hover-color: var(--color-primary);
+  }
+
+  // 开关深色
+  .el-switch {
+    --el-switch-off-color: var(--color-border);
+  }
+
+  // 标签深色
+  .el-tag {
+    border-color: var(--color-border-light);
+  }
+
+  // Select 深色
+  .el-select-dropdown {
+    background-color: var(--color-bg-elevated);
+    border-color: var(--color-border);
+  }
+}

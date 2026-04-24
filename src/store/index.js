@@ -3,11 +3,13 @@ import { createStore } from 'vuex'
 export default createStore({
   state: {
     user: null,
-    token: localStorage.getItem('Authorization') || ''
+    token: localStorage.getItem('Authorization') || '',
+    searchQuery: ''
   },
   getters: {
     isAuthenticated: state => !!state.token,
-    currentUser: state => state.user
+    currentUser: state => state.user,
+    searchQuery: state => state.searchQuery
   },
   mutations: {
     SET_TOKEN(state, token) {
@@ -21,6 +23,9 @@ export default createStore({
       state.token = ''
       state.user = null
       localStorage.removeItem('Authorization')
+    },
+    SET_SEARCH_QUERY(state, query) {
+      state.searchQuery = query
     }
   },
   actions: {

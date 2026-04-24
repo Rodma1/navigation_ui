@@ -1,22 +1,25 @@
 <template>
     <div>
-        <el-button @click="refreshList">查询</el-button>
-        <el-button @click="dialogVisible = true;getAllCategories()">创建文章</el-button>
-
-        <el-button plain @click="categoryVisible = true;getAllCategories()">创建类别</el-button>
-        <el-button @click="handleBatchDelete()">删除文章</el-button>
-
-        <el-input style="width: 200px;margin-left: 10px"  v-model="pageArticleFrom.name" placeholder="查询文章名"></el-input>
-        <el-input style="width: 200px;margin-left: 10px"  v-model="pageArticleFrom.url" placeholder="查询文章地址"></el-input>
-
-        <el-cascader style="width: 200px;margin-left: 10px;"
-                     v-model="pageArticleFrom.categoryId"
-                     :options="categoryOptions"
-                     placeholder="查询文章类别"
-                     :show-all-levels="true"
-                     :props="{emitPath:false, multiple :false, checkStrictly: true,value: 'id',label:'name' }"
-                     clearable>
-        </el-cascader>
+        <div class="toolbar">
+          <div class="toolbar-actions">
+            <el-button @click="refreshList">查询</el-button>
+            <el-button @click="dialogVisible = true;getAllCategories()">创建文章</el-button>
+            <el-button plain @click="categoryVisible = true;getAllCategories()">创建类别</el-button>
+            <el-button @click="handleBatchDelete()">删除文章</el-button>
+          </div>
+          <div class="toolbar-filters">
+            <el-input class="toolbar-input" v-model="pageArticleFrom.name" placeholder="查询文章名"></el-input>
+            <el-input class="toolbar-input" v-model="pageArticleFrom.url" placeholder="查询文章地址"></el-input>
+            <el-cascader class="toolbar-cascader"
+                         v-model="pageArticleFrom.categoryId"
+                         :options="categoryOptions"
+                         placeholder="查询文章类别"
+                         :show-all-levels="true"
+                         :props="{emitPath:false, multiple :false, checkStrictly: true,value: 'id',label:'name' }"
+                         clearable>
+            </el-cascader>
+          </div>
+        </div>
 
         <el-table
             :data="tableData"
@@ -436,3 +439,43 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.toolbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.toolbar-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.toolbar-input {
+  width: 200px;
+}
+
+.toolbar-cascader {
+  width: 200px;
+}
+
+@media (max-width: 768px) {
+  .toolbar-input {
+    width: 100%;
+  }
+
+  .toolbar-cascader {
+    width: 100%;
+  }
+}
+</style>
