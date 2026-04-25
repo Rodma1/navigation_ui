@@ -8,7 +8,12 @@
 
     <aside class="nav-sidebar" :class="{ 'nav-sidebar--collapsed': isMobile && !sidebarOpen }">
       <div class="sidebar-inner">
-        <h3 class="sidebar-title">分类导航</h3>
+        <div class="sidebar-title-row">
+          <h3 class="sidebar-title">分类导航</h3>
+          <el-button v-if="isLoggedIn" size="small" text @click="openCategoryDialog(null)">
+            <el-icon><FolderAdd /></el-icon>
+          </el-button>
+        </div>
         <el-tree
           :data="categories"
           :props="defaultProps"
@@ -20,54 +25,73 @@
       </div>
     </aside>
     <main class="nav-content">
+      <!-- 顶部操作栏 -->
+      <div v-if="isLoggedIn" class="content-toolbar">
+        <el-button type="primary" size="small" @click="openSiteDialog(null)">
+          <el-icon><Plus /></el-icon> 新增网站
+        </el-button>
+        <el-button size="small" @click="openCategoryDialog(null)">
+          <el-icon><FolderAdd /></el-icon> 新增分类
+        </el-button>
+      </div>
+
       <div v-if="filteredCategories.length === 0 && searchQuery" class="empty-tip">
         <el-icon :size="48" color="var(--color-text-muted)"><Search /></el-icon>
         <p>没有找到匹配「{{ searchQuery }}」的网站</p>
       </div>
-      <CategoryContent v-for="category in filteredCategories" :key="category.id" :category="category" />
+      <CategoryContent
+        v-for="category in filteredCategories"
+        :key="category.id"
+        :category="category"
+        :show-actions="isLoggedIn"
+        @add-site="openSiteDialog"
+        @add-category="openCategoryDialog"
+        @edit-site="openSiteDialog"
+        @delete-site="handleDeleteSite"
+      />
     </main>
+
+    <!-- 网站弹窗 -->
+    <SiteDialog
+      v-model="siteDialogVisible"
+      :edit-data="siteDialogData"
+      @success="fetchCategories"
+    />
+
+    <!-- 分类弹窗 -->
+    <CategoryDialog
+      v-model="categoryDialogVisible"
+      :parent-id="categoryDialogParentId"
+      @success="fetchCategories"
+    />
   </div>
 </template>
 
 <script>
 import CategoryContent from '@/components/website/CategoryContent.vue'
+import SiteDialog from '@/components/website/SiteDialog.vue'
+import CategoryDialog from '@/components/website/CategoryDialog.vue'
+import { deleteSite } from '@/api/navigate'
 
 export default {
-  components: { CategoryContent },
+  components: { CategoryContent, SiteDialog, CategoryDialog },
   data() {
     return {
-      activeCategory: '1',
       sidebarOpen: false,
       isMobile: false,
-      categories: [
-        {
-          id: null,
-          parentId: null,
-          sort: null,
-          name: '',
-          icon: 'el-icon-search',
-          children: [],
-          delFlag: '0',
-          sites: [
-            {
-              id: null,
-              categoryId: null,
-              name: '',
-              image: '',
-              description: '',
-              url: '',
-              createTime: '',
-              updateTime: '',
-              createBy: null,
-              updateBy: null,
-            },
-          ],
-        },
-      ],
+      categories: [],
       defaultProps: {
         children: 'children',
         label: 'name',
       },
+      // 网站弹窗
+      siteDialogVisible: false,
+      siteDialogData: null,
+      // 分类弹窗
+      categoryDialogVisible: false,
+      categoryDialogParentId: null,
+      // 登录状态
+      isLoggedIn: false,
     }
   },
   computed: {
@@ -82,6 +106,7 @@ export default {
   },
   created() {
     this.fetchCategories()
+    this.checkLoginStatus()
     this.handleResize()
     window.addEventListener('resize', this.handleResize)
   },
@@ -89,6 +114,9 @@ export default {
     window.removeEventListener('resize', this.handleResize)
   },
   methods: {
+    checkLoginStatus() {
+      this.isLoggedIn = !!localStorage.getItem('Authorization')
+    },
     handleResize() {
       this.isMobile = window.innerWidth < 900
     },
@@ -108,11 +136,47 @@ export default {
           top: targetPosition,
           behavior: 'smooth',
         })
-        // 移动端点击后收起侧边栏
         if (this.isMobile) {
           this.sidebarOpen = false
         }
       }
+    },
+    openSiteDialog(siteOrCategory) {
+      if (siteOrCategory && siteOrCategory.url) {
+        // 编辑网站
+        this.siteDialogData = { ...siteOrCategory }
+      } else if (siteOrCategory && siteOrCategory.id) {
+        // 从分类新增，预填 categoryId
+        this.siteDialogData = { categoryId: siteOrCategory.id }
+      } else {
+        // 全局新增
+        this.siteDialogData = null
+      }
+      this.siteDialogVisible = true
+    },
+    openCategoryDialog(category) {
+      this.categoryDialogParentId = category ? category.id : null
+      this.categoryDialogVisible = true
+    },
+    handleDeleteSite(site) {
+      this.$confirm(`确定删除网站「${site.name}」？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(async () => {
+        try {
+          const res = await deleteSite([site.id])
+          if (res.data.code === 200) {
+            this.$message.success('删除成功')
+            this.fetchCategories()
+          } else {
+            this.$message.error(res.data.message || '删除失败')
+          }
+        } catch (e) {
+          console.error('删除失败', e)
+          this.$message.error('删除失败')
+        }
+      }).catch(() => {})
     },
     filterCategories(categories, query) {
       if (!categories) return []
@@ -186,15 +250,22 @@ export default {
   }
 }
 
+.sidebar-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
 .sidebar-title {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin: 0 0 var(--space-3) 0;
-  padding-bottom: var(--space-3);
-  border-bottom: 1px solid var(--color-border-light);
+  margin: 0;
 }
 
 .category-tree {
@@ -212,7 +283,6 @@ export default {
     transition: transform var(--transition-base);
   }
 
-  // 展开/收起子列表动画
   :deep(.el-tree-node__children) {
     overflow: hidden;
     transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
@@ -232,6 +302,14 @@ export default {
 .nav-content {
   flex: 1;
   min-width: 0;
+}
+
+.content-toolbar {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .empty-tip {

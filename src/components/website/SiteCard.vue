@@ -1,33 +1,48 @@
 <template>
-  <el-tooltip :content="site.url" placement="bottom" :show-after="800">
-    <a :href="site.url" target="_blank" class="site-card" rel="noopener" :aria-label="'访问 ' + site.name">
-      <div class="site-card-glow"></div>
-      <div class="site-card-icon">
-        <ImagePreview v-if="site.image" :src="site.image" width="40" height="40" />
-        <img v-else :src="faviconUrl" class="site-favicon" @error="onFaviconError" />
-      </div>
-      <div class="site-card-content">
-        <span class="site-card-name">{{ site.name }}</span>
-        <span class="site-card-desc">{{ site.description }}</span>
-      </div>
-      <el-icon class="site-card-arrow"><ArrowRight /></el-icon>
-    </a>
-  </el-tooltip>
+  <div class="site-card-wrapper">
+    <el-tooltip :content="site.url" placement="bottom" :show-after="800">
+      <a :href="site.url" target="_blank" class="site-card" rel="noopener" :aria-label="'访问 ' + site.name">
+        <div class="site-card-glow"></div>
+        <div class="site-card-icon">
+          <ImagePreview v-if="site.image" :src="site.image" width="40" height="40" />
+          <img v-else :src="faviconUrl" class="site-favicon" @error="onFaviconError" />
+        </div>
+        <div class="site-card-content">
+          <span class="site-card-name">{{ site.name }}</span>
+          <span class="site-card-desc">{{ site.description }}</span>
+        </div>
+        <el-icon class="site-card-arrow"><ArrowRight /></el-icon>
+      </a>
+    </el-tooltip>
+    <!-- 管理操作（登录后显示） -->
+    <div v-if="showActions" class="site-card-actions">
+      <el-button :icon="Edit" circle size="small" class="action-btn" @click.stop="$emit('edit', site)" />
+      <el-button :icon="Delete" circle size="small" type="danger" class="action-btn" @click.stop="$emit('delete', site)" />
+    </div>
+  </div>
 </template>
 
 <script>
 import ImagePreview from '@/components/ImagePreview/index.vue'
+import { Edit, Delete } from '@element-plus/icons-vue'
 
 export default {
   props: {
     site: Object,
+    showActions: {
+      type: Boolean,
+      default: false,
+    },
   },
   components: {
     ImagePreview,
   },
+  emits: ['edit', 'delete'],
   data() {
     return {
       faviconFailed: false,
+      Edit,
+      Delete,
     }
   },
   computed: {
@@ -50,6 +65,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.site-card-wrapper {
+  position: relative;
+}
+
 .site-card {
   display: flex;
   align-items: center;
@@ -66,7 +85,6 @@ export default {
   position: relative;
   overflow: hidden;
 
-  // 左侧边条
   &::before {
     content: '';
     position: absolute;
@@ -96,6 +114,10 @@ export default {
       opacity: 1;
       transform: translateX(0);
     }
+
+    ~ .site-card-actions {
+      opacity: 1;
+    }
   }
 
   &:active {
@@ -103,7 +125,6 @@ export default {
   }
 }
 
-// hover 光晕
 .site-card-glow {
   position: absolute;
   top: -50%;
@@ -179,6 +200,33 @@ export default {
   transition: all var(--transition-base);
 }
 
+.site-card-actions {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  z-index: 2;
+
+  .site-card-wrapper:hover & {
+    opacity: 1;
+  }
+}
+
+.action-btn {
+  width: 28px !important;
+  height: 28px !important;
+  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.85) !important;
+  border: 1px solid var(--color-border-light) !important;
+
+  :root[data-theme="dark"] & {
+    background: rgba(30, 41, 59, 0.85) !important;
+  }
+}
+
 @media (max-width: 480px) {
   .site-card {
     padding: var(--space-3) var(--space-4);
@@ -204,6 +252,10 @@ export default {
 
   .site-card-arrow {
     display: none;
+  }
+
+  .site-card-actions {
+    opacity: 1;
   }
 }
 </style>
