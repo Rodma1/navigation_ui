@@ -5,14 +5,39 @@
       <span v-if="level >= 3" class="category-dot"></span>
       <h2 class="category-name" :class="{ 'category-name--sub': level >= 3 }">{{ category.name }}</h2>
       <span class="category-count">{{ (category.sites && category.sites.length) || 0 }} 个网站</span>
+      <div v-if="showActions" class="category-actions">
+        <el-button size="small" text @click="$emit('add-site', category)">
+          <el-icon><Plus /></el-icon> 新增网站
+        </el-button>
+        <el-button size="small" text @click="$emit('add-category', category)">
+          <el-icon><FolderAdd /></el-icon> 新增子分类
+        </el-button>
+      </div>
     </div>
 
     <div class="category-grid">
-      <SiteCard v-for="site in category.sites" :key="site.id" :site="site" />
+      <SiteCard
+        v-for="site in category.sites"
+        :key="site.id"
+        :site="site"
+        :show-actions="showActions"
+        @edit="$emit('edit-site', $event)"
+        @delete="$emit('delete-site', $event)"
+      />
     </div>
 
     <div v-if="category.children && category.children.length" class="category-children" :class="{ 'category-children--deep': level >= 2 }">
-      <CategoryContent v-for="child in category.children" :key="child.id" :category="child" :level="level + 1" />
+      <CategoryContent
+        v-for="child in category.children"
+        :key="child.id"
+        :category="child"
+        :level="level + 1"
+        :show-actions="showActions"
+        @add-site="$emit('add-site', $event)"
+        @add-category="$emit('add-category', $event)"
+        @edit-site="$emit('edit-site', $event)"
+        @delete-site="$emit('delete-site', $event)"
+      />
     </div>
   </div>
 </template>
@@ -28,11 +53,16 @@ export default {
       type: Number,
       default: 1,
     },
+    showActions: {
+      type: Boolean,
+      default: false,
+    },
   },
   components: {
     SiteCard,
     CategoryContent: this,
   },
+  emits: ['add-site', 'add-category', 'edit-site', 'delete-site'],
 }
 </script>
 
@@ -49,7 +79,6 @@ export default {
   }
 }
 
-// 三级+整体用浅色背景包裹
 .category-level-3,
 .category-level-4,
 .category-level-5 {
@@ -66,6 +95,7 @@ export default {
   margin-bottom: var(--space-5);
   padding-bottom: var(--space-3);
   border-bottom: 1px solid var(--color-border-light);
+  flex-wrap: wrap;
 
   &--sub {
     margin-bottom: var(--space-4);
@@ -115,20 +145,24 @@ export default {
   border-radius: var(--radius-full);
 }
 
+.category-actions {
+  display: flex;
+  gap: var(--space-1);
+  margin-left: auto;
+}
+
 .category-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: var(--space-4);
 }
 
-// 二级：保持缩进 + 边线
 .category-children {
   margin-left: var(--space-6);
   padding-left: var(--space-4);
   border-left: 2px solid var(--color-border-light);
 }
 
-// 三级+：不缩进，与父级同宽
 .category-children--deep {
   margin-left: 0;
   padding-left: 0;
@@ -161,6 +195,12 @@ export default {
 
   .category-name--sub {
     font-size: var(--font-size-sm);
+  }
+
+  .category-actions {
+    width: 100%;
+    margin-left: 0;
+    margin-top: var(--space-2);
   }
 }
 </style>
