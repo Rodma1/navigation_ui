@@ -13,6 +13,7 @@
       <el-radio-group v-model="taskType" @change="handleTaskTypeChange">
         <el-radio-button label="1">考研任务</el-radio-button>
         <el-radio-button label="2">找工作任务</el-radio-button>
+        <el-radio-button label="3">生活</el-radio-button>
       </el-radio-group>
     </div>
 
@@ -35,8 +36,8 @@
           <div class="plan-item-content">
             <p class="plan-item-desc">{{ plan.taskContent }}</p>
             <div class="plan-item-info">
-              <el-tag :type="plan.taskStatus === '1' ? 'success' : 'warning'" size="small">
-                {{ plan.taskStatus === '1' ? '进行中' : '已暂停' }}
+              <el-tag :type="plan.status === '1' ? 'success' : 'warning'" size="small">
+                {{ plan.status === '1' ? '进行中' : '已暂停' }}
               </el-tag>
               <span class="plan-item-time">
                 开始时间：{{ formatDate(plan.startTime) }}
@@ -105,8 +106,8 @@
             value-format="YYYY-MM-DD"
           />
         </el-form-item>
-        <el-form-item label="任务状态" prop="taskStatus">
-          <el-select v-model="planForm.taskStatus" placeholder="请选择任务状态" style="width: 100%">
+        <el-form-item label="任务状态" prop="status">
+          <el-select v-model="planForm.status" placeholder="请选择任务状态" style="width: 100%">
             <el-option label="进行中" value="1" />
             <el-option label="已暂停" value="0" />
           </el-select>
@@ -158,7 +159,7 @@ export default {
       taskType: '1',
       startTime: '',
       endTime: '',
-      taskStatus: '1'
+      status: '1'
     })
 
     // 表单校验规则
@@ -173,7 +174,7 @@ export default {
       startTime: [
         { required: true, message: '请选择开始时间', trigger: 'change' }
       ],
-      taskStatus: [
+      status: [
         { required: true, message: '请选择任务状态', trigger: 'change' }
       ]
     }
@@ -227,7 +228,7 @@ export default {
         taskType: taskType.value,
         startTime: '',
         endTime: '',
-        taskStatus: '1'
+        status: '1'
       })
       dialogVisible.value = true
     }
