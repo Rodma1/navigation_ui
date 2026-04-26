@@ -6,11 +6,16 @@
     @close="handleClose"
   >
     <el-form ref="formRef" :model="form" :rules="rules" label-width="80px">
+      <el-form-item label="网站地址" prop="url">
+        <div style="display: flex; gap: 8px; width: 100%;">
+          <el-input v-model="form.url" placeholder="请输入网站 URL" style="flex: 1" />
+          <el-button type="success" :loading="analyzing" @click="handleAnalyze" :disabled="!form.url">
+            智能识别
+          </el-button>
+        </div>
+      </el-form-item>
       <el-form-item label="网站名称" prop="name">
         <el-input v-model="form.name" placeholder="请输入网站名称" />
-      </el-form-item>
-      <el-form-item label="网站地址" prop="url">
-        <el-input v-model="form.url" placeholder="请输入网站 URL" />
       </el-form-item>
       <el-form-item label="网站描述" prop="description">
         <el-input v-model="form.description" type="textarea" :rows="2" placeholder="请输入网站描述" />
@@ -38,7 +43,6 @@
 </template>
 
 <script>
-import { createSite, updateSite, getAllCategoryTree } from '@/api/navigate'
 
 export default {
   name: 'SiteDialog',
