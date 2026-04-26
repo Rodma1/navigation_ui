@@ -66,15 +66,9 @@ const routes = [
         meta: { title: '文件上传' }
       },
       {
-        path: '/task/plan',
-        name: 'taskPlan',
-        component: () => import('@/views/task/PlanList.vue'),
-        meta: { title: '任务计划' }
-      },
-      {
-        path: '/task/checkin',
-        name: 'taskCheckIn',
-        component: () => import('@/views/task/CheckInList.vue'),
+        path: '/task',
+        name: 'task',
+        component: () => import('@/views/task/TaskView.vue'),
         meta: { title: '任务打卡' }
       }
     ]
