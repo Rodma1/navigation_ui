@@ -1,9 +1,9 @@
 <template>
   <el-dialog
-    :title="isEdit ? '编辑网站' : '新增网站'"
-    v-model="visible"
-    width="480px"
-    @close="handleClose"
+      :title="isEdit ? '编辑网站' : '新增网站'"
+      v-model="visible"
+      width="480px"
+      @close="handleClose"
   >
     <el-form ref="formRef" :model="form" :rules="rules" label-width="80px">
       <el-form-item label="网站地址" prop="url">
@@ -25,13 +25,13 @@
       </el-form-item>
       <el-form-item label="所属分类" prop="categoryId">
         <el-cascader
-          v-model="form.categoryId"
-          :options="categoryOptions"
-          placeholder="请选择分类"
-          :show-all-levels="true"
-          :props="{ emitPath: false, checkStrictly: true, value: 'id', label: 'name' }"
-          clearable
-          style="width: 100%"
+            v-model="form.categoryId"
+            :options="categoryOptions"
+            placeholder="请选择分类"
+            :show-all-levels="true"
+            :props="{ emitPath: false, checkStrictly: true, value: 'id', label: 'name' }"
+            clearable
+            style="width: 100%"
         />
       </el-form-item>
     </el-form>
@@ -43,6 +43,7 @@
 </template>
 
 <script>
+import { createSite, updateSite, getAllCategoryTree, analyzeSite } from '@/api/navigate'
 
 export default {
   name: 'SiteDialog',
@@ -66,6 +67,7 @@ export default {
       },
       categoryOptions: [],
       submitting: false,
+      analyzing: false,
       rules: {
         name: [{ required: true, message: '请输入网站名称', trigger: 'blur' }],
         url: [{ required: true, message: '请输入网站地址', trigger: 'blur' }],
@@ -117,6 +119,28 @@ export default {
         }
       } catch (e) {
         console.error('加载分类失败', e)
+      }
+    },
+    async handleAnalyze() {
+      if (!this.form.url) return
+      this.analyzing = true
+      try {
+        const res = await analyzeSite(this.form.url)
+        if (res.data.code === 200) {
+          const data = res.data.data
+          if (data.name) this.form.name = data.name
+          if (data.description) this.form.description = data.description
+          if (data.imageUrl) this.form.image = data.imageUrl
+          if (data.categoryId) this.form.categoryId = data.categoryId
+          this.$message.success('智能识别完成，请确认信息后提交')
+        } else {
+          this.$message.error(res.data.message || '智能识别失败')
+        }
+      } catch (e) {
+        console.error('智能识别失败', e)
+        this.$message.error('智能识别失败，请稍后重试')
+      } finally {
+        this.analyzing = false
       }
     },
     handleClose() {
