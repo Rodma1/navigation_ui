@@ -11,7 +11,7 @@
     <!-- 任务类型切换 -->
     <div class="task-type-switch">
       <el-radio-group v-model="taskType" @change="handleTaskTypeChange">
-        <el-radio-button label="1">考研任务</el-radio-button>
+        <el-radio-button label="1">学习任务</el-radio-button>
         <el-radio-button label="2">找工作任务</el-radio-button>
         <el-radio-button label="3">生活</el-radio-button>
       </el-radio-group>

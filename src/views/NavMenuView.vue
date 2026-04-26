@@ -177,8 +177,7 @@ export default {
       ],
       // 工具箱下拉
       toolboxItems: [
-        { path: '/task/plan', title: '任务计划', icon: 'List' },
-        { path: '/task/checkin', title: '任务打卡', icon: 'Calendar' },
+        { path: '/task', title: '任务打卡', icon: 'Calendar' },
         { path: '/file-upload', title: '文件上传', icon: 'Upload' },
         { path: '/elasticsearch', title: 'ES 操作', icon: 'Search' },
       ],
