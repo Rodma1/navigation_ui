@@ -50,10 +50,8 @@
             <el-table-column align="right">
                 <template #default="{ row }">
                     <el-button
-                        size="mini"
                         @click="updateArticleFrom=row;updateArticleVisible = true;getAllCategories()">编辑文章</el-button>
                     <el-button
-                        size="mini"
                         type="danger"
                         @click="handleDelete(row)"
                     >
@@ -259,11 +257,13 @@ export default {
                     categoryId: this.pageArticleFrom.categoryId
                 };
                 const response = await this.axios.get('/cyzArticle/pages',{params});
+                console.log(response.data)
                 this.tableData = response.data.data.rows.map(row => ({
                     ...row,
-                    state: Number(row.state)
+                    state: Number(row.state),
+                    id: row.id
                 }));
-
+                console.log(this.tableData)
                 this.total = response.data.data.total
                 // console.log("查询" + this.tableData)
             } catch (error) {
