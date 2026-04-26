@@ -6,11 +6,16 @@
     @close="handleClose"
   >
     <el-form ref="formRef" :model="form" :rules="rules" label-width="80px">
+      <el-form-item label="网站地址" prop="url">
+        <div style="display: flex; gap: 8px; width: 100%;">
+          <el-input v-model="form.url" placeholder="请输入网站 URL" style="flex: 1" />
+          <el-button type="success" :loading="analyzing" @click="handleAnalyze" :disabled="!form.url">
+            智能识别
+          </el-button>
+        </div>
+      </el-form-item>
       <el-form-item label="网站名称" prop="name">
         <el-input v-model="form.name" placeholder="请输入网站名称" />
-      </el-form-item>
-      <el-form-item label="网站地址" prop="url">
-        <el-input v-model="form.url" placeholder="请输入网站 URL" />
       </el-form-item>
       <el-form-item label="网站描述" prop="description">
         <el-input v-model="form.description" type="textarea" :rows="2" placeholder="请输入网站描述" />
@@ -38,7 +43,7 @@
 </template>
 
 <script>
-import { createSite, updateSite, getAllCategoryTree } from '@/api/navigate'
+import { createSite, updateSite, getAllCategoryTree, analyzeSite } from '@/api/navigate'
 
 export default {
   name: 'SiteDialog',
@@ -62,6 +67,7 @@ export default {
       },
       categoryOptions: [],
       submitting: false,
+      analyzing: false,
       rules: {
         name: [{ required: true, message: '请输入网站名称', trigger: 'blur' }],
         url: [{ required: true, message: '请输入网站地址', trigger: 'blur' }],
@@ -113,6 +119,28 @@ export default {
         }
       } catch (e) {
         console.error('加载分类失败', e)
+      }
+    },
+    async handleAnalyze() {
+      if (!this.form.url) return
+      this.analyzing = true
+      try {
+        const res = await analyzeSite(this.form.url)
+        if (res.data.code === 200) {
+          const data = res.data.data
+          if (data.name) this.form.name = data.name
+          if (data.description) this.form.description = data.description
+          if (data.imageUrl) this.form.image = data.imageUrl
+          if (data.categoryId) this.form.categoryId = data.categoryId
+          this.$message.success('智能识别完成，请确认信息后提交')
+        } else {
+          this.$message.error(res.data.message || '智能识别失败')
+        }
+      } catch (e) {
+        console.error('智能识别失败', e)
+        this.$message.error('智能识别失败，请稍后重试')
+      } finally {
+        this.analyzing = false
       }
     },
     handleClose() {

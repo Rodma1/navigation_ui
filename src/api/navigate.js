@@ -34,3 +34,8 @@ export function deleteCategory(id) {
 export function getAllCategoryTree() {
   return axios.get('/categories/getAllCategoryTree/NAVIGATE')
 }
+
+// AI 智能分析网站（AI 调用耗时较长，单独设置超时）
+export function analyzeSite(url) {
+  return axios.get('/cyzNavigateSite/analyze', { params: { url }, timeout: 120000 })
+}
