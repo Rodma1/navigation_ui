@@ -5,7 +5,7 @@
         <div class="site-card-glow"></div>
         <div class="site-card-icon">
           <ImagePreview v-if="site.image" :src="site.image" width="40" height="40" />
-          <img v-else :src="faviconUrl" class="site-favicon" @error="onFaviconError" />
+          <img v-else :src="faviconUrl" class="site-favicon" referrerpolicy="no-referrer" @error="onFaviconError" />
         </div>
         <div class="site-card-content">
           <span class="site-card-name">{{ site.name }}</span>
@@ -40,25 +40,34 @@ export default {
   emits: ['edit', 'delete'],
   data() {
     return {
-      faviconFailed: false,
+      faviconIndex: 0,
       Edit,
       Delete,
     }
   },
   computed: {
-    faviconUrl() {
-      if (this.faviconFailed) return '/logo.png'
+    faviconSources() {
       try {
-        const url = new URL(this.site.url)
-        return `https://www.google.com/s2/favicons?domain=${url.hostname}&sz=64`
+        const hostname = new URL(this.site.url).hostname
+        return [
+          `https://icons.duckduckgo.com/ip3/${hostname}.ico`,
+          `https://favicon.yandex.net/favicon/v2/${hostname}?size=64`,
+          `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`,
+        ]
       } catch {
-        return '/logo.png'
+        return []
       }
+    },
+    faviconUrl() {
+      return this.faviconSources[this.faviconIndex] || '/logo.png'
     },
   },
   methods: {
     onFaviconError() {
-      this.faviconFailed = true
+      this.faviconIndex++
+      if (this.faviconIndex >= this.faviconSources.length) {
+        this.faviconIndex = -1
+      }
     },
   },
 }

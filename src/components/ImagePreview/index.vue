@@ -3,6 +3,7 @@
       :src="`${realSrc}`"
       fit="cover"
       :style="`width:${realWidth};height:${realHeight};`"
+      referrerpolicy="no-referrer"
     >
       <div slot="error" class="image-slot">
         <i class="el-icon-picture-outline"></i>
