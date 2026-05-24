@@ -29,9 +29,9 @@ export function deleteConversation(conversationId) {
 export function sendStreamMessage(data, { onMessage, onDone, onError }) {
   const token = localStorage.getItem('Authorization')
 
-  // 开发环境直连后端，绕过代理缓冲；生产环境走相对路径
+  // 开发环境直连后端（绕过代理缓冲）；生产环境走 nginx /api 代理（nginx 已配置 SSE 禁缓冲）
   const isDev = process.env.NODE_ENV === 'development'
-  const baseURL = isDev ? process.env.VUE_APP_BASE_URL : ''
+  const baseURL = isDev ? process.env.VUE_APP_BASE_URL : (process.env.VUE_APP_BASE_API || '')
   const url = `${baseURL}/ai/chat/stream`
 
   fetch(url, {
