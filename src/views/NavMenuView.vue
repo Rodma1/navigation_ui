@@ -177,6 +177,7 @@ export default {
       ],
       // 工具箱下拉
       toolboxItems: [
+        { path: '/ai-chat', title: 'AI 助手', icon: 'Promotion' },
         { path: '/task', title: '任务打卡', icon: 'Calendar' },
         { path: '/file-upload', title: '文件上传', icon: 'Upload' },
         { path: '/elasticsearch', title: 'ES 操作', icon: 'Search' },

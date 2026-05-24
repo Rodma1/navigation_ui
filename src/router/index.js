@@ -70,6 +70,12 @@ const routes = [
         name: 'task',
         component: () => import('@/views/task/TaskView.vue'),
         meta: { title: '任务打卡' }
+      },
+      {
+        path: 'ai-chat',
+        name: 'aiChat',
+        component: () => import('@/views/AiChatView.vue'),
+        meta: { title: 'AI 助手', requiresAuth: true }
       }
     ]
   },
